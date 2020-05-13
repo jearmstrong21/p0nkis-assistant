@@ -120,6 +120,7 @@ public class CommandListener extends ListenerAdapter {
         ExecuteCommand.register(dispatcher);
         DumpTreeCommand.register(dispatcher);
         DumpInformationCommand.register(dispatcher);
+        SourceInfoCommand.register(dispatcher);
         HelpCommand.register(dispatcher);
         System.out.println(dumpTree());
 //        commandStarts = dispatcher.getRoot().getChildren().stream().map(CommandNode::getName).collect(Collectors.toList());
