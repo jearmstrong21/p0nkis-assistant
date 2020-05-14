@@ -57,10 +57,6 @@ public class CustomEmbedBuilder {
         return color(Constants.SUCCESS);
     }
 
-    public CustomEmbedBuilder waiting() {
-        return color(Constants.WAITING);
-    }
-
     public CustomEmbedBuilder failure() {
         return color(Constants.FAILURE);
     }

@@ -21,7 +21,7 @@ public class ImageCommand {
         Message message = source.to.sendMessage("Generating image...").complete();
         source.to.sendTyping().queue();
         long lastTyping = System.currentTimeMillis();
-        BufferedImage image = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
                 image.setRGB(x, y, new Color(x * 255 / image.getWidth(), y * 255 / image.getHeight(), 0).getRGB());
@@ -35,8 +35,7 @@ public class ImageCommand {
             message.editMessage(new CustomEmbedBuilder().failure().source(source).title("Error!").description(Utils.toString(e)).build()).queue();
             return CommandListener.FAILURE;
         }
-        message.editMessage("Done!").queue();
-        source.to.sendFile(new File(filename)).queue();
+        source.to.sendFile(new File(filename)).queue(fileMessage -> message.editMessage("Done!").queue());
         if (!new File(filename).delete()) {
             source.to.sendMessage(new CustomEmbedBuilder().source(source).failure().title("Unable to delete image on disk.").build()).queue();
             return CommandListener.FAILURE;

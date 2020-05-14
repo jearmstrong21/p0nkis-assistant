@@ -14,12 +14,11 @@ public class Constants {
     public static final int EMBED_AUTHOR = 256;
     public static final int EMBED_TOTAL_CHARS = 6000;
 
-    //    public static final Color SUCCESS = new Color(233, 30, 99);
-//    public static final Color WAITING = Color.BLUE;
-//    public static final Color FAILURE = Color.BLACK;
-    public static final Color SUCCESS = new Color(114, 137, 218);
-    public static final Color WAITING = new Color(0, 0, 0);
-    public static final Color FAILURE = new Color(255, 0, 0);
+    public static final Color SUCCESS = new Color(233, 30, 99);
+    public static final Color FAILURE = Color.BLACK;
+//    public static final Color SUCCESS = new Color(114, 137, 218);
+//    public static final Color WAITING = new Color(0, 0, 0);
+//    public static final Color FAILURE = new Color(255, 0, 0);
 
     public static final String[] UNICODE_NUMBERS = new String[]{
             "\u0031\ufe0f\u20e3",
