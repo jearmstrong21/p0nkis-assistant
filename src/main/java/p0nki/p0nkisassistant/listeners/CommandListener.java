@@ -93,25 +93,6 @@ public class CommandListener extends ListenerAdapter {
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
         dispatcher = new CommandDispatcher<>();
-//        RolepollCommand.register(dispatcher);
-//        ZalgoCommand.register(dispatcher);
-//        ExecuteCommand.register(dispatcher);
-//        InfoCommand.register(dispatcher);
-//        SayCommand.register(dispatcher);
-//        ConfigCommand.register(dispatcher);
-//        PingCommand.register(dispatcher);
-//        TrollCommand.register(dispatcher);
-//        DumpDataCommand.register(dispatcher);
-//        MessageCountCommand.register(dispatcher);
-//        PrefixCommand.register(dispatcher);
-//        DeleteCommand.register(dispatcher);
-//        NickCommand.register(dispatcher);
-//        LoggerCommand.register(dispatcher);
-//        StarboardCommand.register(dispatcher);
-//        ReactionCommand.register(dispatcher);
-//        RepeatStringCommand.register(dispatcher);
-//        EchoCommand.register(dispatcher);
-//        HelpCommand.register(dispatcher);
         EchoCommand.register(dispatcher);
         MembersCommand.register(dispatcher);
         ImageCommand.register(dispatcher);
@@ -123,16 +104,7 @@ public class CommandListener extends ListenerAdapter {
         SourceInfoCommand.register(dispatcher);
         HelpCommand.register(dispatcher);
         System.out.println(dumpTree());
-//        commandStarts = dispatcher.getRoot().getChildren().stream().map(CommandNode::getName).collect(Collectors.toList());
-//        log(dispatcher.getRoot(), "");
-//        dispatcher.getRoot().getChildren().forEach(n -> log(n, ""));
-//        System.out.println(String.join("", commandStarts));
     }
-
-//    private void log(CommandNode<CommandSource> node, String indent) {
-//        System.out.println(indent + node.getName());
-//        node.getChildren().forEach(n -> log(n, indent + "\t"));
-//    }
 
     public String getPrefix(CommandSource source) {
         BotConfig botConfig = BotConfig.get();
@@ -163,6 +135,7 @@ public class CommandListener extends ListenerAdapter {
     @SuppressWarnings("UnusedReturnValue")
     public int runCommand(CommandSource source, String command) {
         command = command.trim();
+        if (source.message.getAuthor().isBot()) return CommandListener.IGNORE;
         if (dispatcher.getRoot().getChildren().stream().map(CommandNode::getName).noneMatch(command::startsWith))
             return CommandListener.IGNORE;
         try {

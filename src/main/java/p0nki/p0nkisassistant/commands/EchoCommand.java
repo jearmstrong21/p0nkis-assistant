@@ -3,6 +3,7 @@ package p0nki.p0nkisassistant.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import p0nki.p0nkisassistant.listeners.CommandListener;
 import p0nki.p0nkisassistant.utils.CommandSource;
+import p0nki.p0nkisassistant.utils.Utils;
 
 import static p0nki.p0nkisassistant.utils.BrigadierUtils.*;
 
@@ -15,6 +16,7 @@ public class EchoCommand {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(literal("echo")
+                .requires(Utils.isOwner())
                 .then(argument("text", greedyString())
                         .executes(context -> echo(context.getSource(), context.getArgument("text", String.class)))
                 )
