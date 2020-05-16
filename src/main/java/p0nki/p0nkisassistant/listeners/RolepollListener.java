@@ -105,7 +105,7 @@ public class RolepollListener extends ListenerAdapter {
             if (emote.isEmoji()) {
                 if (reacts.contains(emote.getEmoji())) {
                     int index = reacts.indexOf(emote.getEmoji());
-                    if (index < CACHED.rolepolls.size()) {
+                    if (index < poll.roles.size()) {
                         Role role = Objects.requireNonNull(guild.getRoleById(poll.roles.get(index)));
                         addRole(guild, member, role);
                     }
@@ -121,7 +121,7 @@ public class RolepollListener extends ListenerAdapter {
             if (emote.isEmoji()) {
                 if (reacts.contains(emote.getEmoji())) {
                     int index = reacts.indexOf(emote.getEmoji());
-                    if (index < CACHED.rolepolls.size()) {
+                    if (index < poll.roles.size()) {
                         Role role = Objects.requireNonNull(guild.getRoleById(poll.roles.get(index)));
                         remRole(guild, member, role);
                     }
