@@ -53,7 +53,7 @@ public class RolepollListener extends ListenerAdapter {
         for (int i = 0; i < poll.roles.size(); i++) {
             embed.field(Constants.UNICODE_NUMBERS[i], Objects.requireNonNull(P0nkisAssistant.jda.getRoleById(poll.roles.get(i))).getAsMention(), false);
         }
-        message.editMessage(embed.build()).complete();
+        message.editMessage("_ _").embed(embed.build()).complete();
         List<String> reacts = Arrays.asList(Arrays.copyOf(Constants.UNICODE_NUMBERS, poll.roles.size()));
         for (String r : reacts) {
             message.addReaction(r).complete();
@@ -93,9 +93,7 @@ public class RolepollListener extends ListenerAdapter {
     }
 
     public void updateAllRolepollsAndLog() {
-        List<Long> times = updateAllRolepolls();
-        long sum = times.stream().reduce(0L, Long::sum);
-        System.out.println("ROLEPOLL UPDATE. Total time: " + sum);
+        System.out.println("ROLEPOLL UPDATE. Total time: " + updateAllRolepolls().stream().reduce(0L, Long::sum));
     }
 
     private void updateRolepollAdd(Guild guild, String id, Member member, MessageReaction.ReactionEmote emote) {
