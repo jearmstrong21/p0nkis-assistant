@@ -24,18 +24,18 @@ public class MembersCommand {
                 .source(source)
                 .success()
                 .description(members.stream()
+                        .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
                         .collect(Collectors.groupingBy(member -> {
-                            if (member.getOnlineStatus() == OnlineStatus.OFFLINE) return "offline";
                             if (member.getRoles().size() == 0) return "null";
                             return member.getRoles().get(0).getId();
                         })).entrySet().stream().sorted(Map.Entry.comparingByKey()).map(entry -> {
                             int n = entry.getValue().size();
-                            if (entry.getKey().equals("offline")) return "offline: " + n;
+                            if (entry.getKey().equals("null")) return "no roles: " + n;
                             Role role = P0nkisAssistant.jda.getRoleById(entry.getKey());
                             if (role != null) {
                                 return role.getAsMention() + ": " + n;
                             }
-                            return "online: " + n;
+                            return "weird top role, probably a bug or uncached members: " + n;
                         }).collect(Collectors.joining("\n")))
                 .build()).queue();
         return CommandListener.SUCCESS;
