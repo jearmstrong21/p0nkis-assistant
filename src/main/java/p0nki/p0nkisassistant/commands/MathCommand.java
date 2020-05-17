@@ -12,7 +12,11 @@ public class MathCommand {
     public static int math(CommandSource source, String expr) {
         expr = expr.replace(" ", "");
         if (expr.equals("9+10")) source.to.sendMessage("21").queue();
-        else source.to.sendMessage("Unable to parse. Try something simpler.").queue();
+        else if (expr.equals("10+9")) source.to.sendMessage("19").queue();
+        else {
+            source.to.sendMessage("Unable to parse. Try something simpler.").queue();
+            return CommandListener.FAILURE;
+        }
         return CommandListener.SUCCESS;
     }
 
