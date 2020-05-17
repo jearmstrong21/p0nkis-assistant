@@ -103,6 +103,7 @@ public class CommandListener extends ListenerAdapter {
         DumpInformationCommand.register(dispatcher);
         SourceInfoCommand.register(dispatcher);
         HelpCommand.register(dispatcher);
+        MathCommand.register(dispatcher);
         System.out.println(dumpTree());
     }
 
