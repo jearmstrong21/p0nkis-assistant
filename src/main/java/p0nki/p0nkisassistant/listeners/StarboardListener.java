@@ -66,8 +66,8 @@ public class StarboardListener extends ListenerAdapter {
                 .setTitle(new WebhookEmbed.EmbedTitle("Message posted in starboard", null))
                 .setDescription(starrers.stream().map(IMentionable::getAsMention).collect(Collectors.joining(", ")))
                 .addField(new WebhookEmbed.EmbedField(false, "Guild", to.getGuild().getName()))
-                .addField(new WebhookEmbed.EmbedField(false, "Starboard channel", to.getAsMention()))
-                .addField(new WebhookEmbed.EmbedField(false, "Message channel", ((TextChannel) message.getChannel()).getAsMention()))
+                .addField(new WebhookEmbed.EmbedField(false, "Starboard channel", to.toString()))
+                .addField(new WebhookEmbed.EmbedField(false, "Message channel", message.getChannel().toString()))
                 .addField(new WebhookEmbed.EmbedField(false, "Original message", "[Jump](" + message.getJumpUrl() + ")"))
                 .addField(new WebhookEmbed.EmbedField(false, "Starboard message", "[Jump](" + m.getJumpUrl() + ")"))
         );
