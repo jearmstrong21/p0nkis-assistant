@@ -5,39 +5,42 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CommandSource {
 
-    public User source;
-    public Message message;
-    public MessageChannel from;
-    public MessageChannel to;
+    private final Message message;
 
-    public Guild guild() {
-        return from instanceof TextChannel ? ((TextChannel) from).getGuild() : null;
+    public CommandSource(Message message) {
+        this.message = message;
     }
 
     public static CommandSource of(MessageReceivedEvent event) {
-        return new CommandSource(event.getMessage().getAuthor(), event.getMessage(), event.getChannel(), event.getChannel());
+        return new CommandSource(event.getMessage());
     }
 
-    public CommandSource(User source, Message message, MessageChannel from, MessageChannel to) {
-        this.source = source;
-        this.message = message;
-        this.from = from;
-        this.to = to;
+    public Message message() {
+        return message;
     }
 
-    public CommandSource from(MessageChannel from) {
-        this.from = from;
-        return this;
+    public MessageChannel channel() {
+        return message.getChannel();
     }
 
-    public CommandSource to(MessageChannel to) {
-        this.to = to;
-        return this;
+    public boolean isGuild() {
+        return channel() instanceof TextChannel;
     }
 
-    public CommandSource source(User source) {
-        this.source = source;
-        return this;
+    public Member member() {
+        return guild().getMember(user());
+    }
+
+    public User user() {
+        return message.getAuthor();
+    }
+
+    public TextChannel textChannel() {
+        return (TextChannel) channel();
+    }
+
+    public Guild guild() {
+        return textChannel().getGuild();
     }
 
 }

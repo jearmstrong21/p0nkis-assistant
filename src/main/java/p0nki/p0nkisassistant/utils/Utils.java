@@ -4,9 +4,6 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
-import p0nki.p0nkisassistant.P0nkisAssistant;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -16,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.Date;
-import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -138,7 +134,7 @@ public class Utils {
         String trace = toString(t);
         String out = "";
         out += "COMMAND: " + command + "\n";
-        out += "SOURCE: source=" + (source == null ? "null" : source.source + ", from=" + source.from + ", to=" + source.to + ", message=" + source.message) + "\n";
+        out += "SOURCE: source=" + (source == null ? "null" : source.user() + "," + source.channel() + "," + source.guild()) + "\n";
         out += "TRACE:\n\n";
         out += trace;
         if (out.length() > 2000 - 6) {
@@ -159,24 +155,20 @@ public class Utils {
     public static <T> Supplier<T> alwaysSupply(T value) {
         return () -> value;
     }
-
-    public static Predicate<CommandSource> isOwner() {
-        return source -> P0nkisAssistant.P0NKI.get().equals(source.source);
-    }
-
-    public static Predicate<CommandSource> isAdmin() {
-        return source -> {
-            if (source.source.equals(P0nkisAssistant.P0NKI.get())) return true;
-            if (source.from instanceof TextChannel) {
-                return Objects.requireNonNull(((TextChannel) source.from).getGuild().getMember(source.source)).hasPermission(Permission.ADMINISTRATOR);
-            }
-            return false;
-        };
-    }
-
-    public static Predicate<CommandSource> isFromGuild() {
-        return source -> source.from instanceof TextChannel;
-    }
+//
+//    public static Predicate<CommandSource> isAdmin() {
+//        return source -> {
+//            if (source.source.equals(P0nkisAssistant.P0NKI.get())) return true;
+//            if (source.from instanceof TextChannel) {
+//                return Objects.requireNonNull(((TextChannel) source.from).getGuild().getMember(source.source)).hasPermission(Permission.ADMINISTRATOR);
+//            }
+//            return false;
+//        };
+//    }
+//
+//    public static Predicate<CommandSource> isFromGuild() {
+//        return source -> source.from instanceof TextChannel;
+//    }
 
 //    public static <T> Predicate<T> or(Predicate<T>... predicates) {
 //        return test -> Arrays.stream(predicates).anyMatch(predicate -> predicate.test(test));

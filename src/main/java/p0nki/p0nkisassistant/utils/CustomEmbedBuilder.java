@@ -69,7 +69,7 @@ public class CustomEmbedBuilder {
     }
 
     public CustomEmbedBuilder source(CommandSource source) {
-        return source(source.source);
+        return source(source.user());
     }
 
     public CustomEmbedBuilder title(String title) {

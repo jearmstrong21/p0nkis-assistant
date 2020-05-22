@@ -1,20 +1,15 @@
 package p0nki.p0nkisassistant.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
-import p0nki.p0nkisassistant.listeners.CommandListener;
-import p0nki.p0nkisassistant.utils.CommandSource;
-import p0nki.p0nkisassistant.utils.Constants;
-import p0nki.p0nkisassistant.utils.CustomEmbedBuilder;
-import p0nki.p0nkisassistant.utils.Utils;
+import p0nki.commandparser.argument.GreedyStringArgumentType;
+import p0nki.commandparser.command.CommandDispatcher;
+import p0nki.p0nkisassistant.utils.*;
 
 import java.util.stream.Collectors;
 
-import static p0nki.p0nkisassistant.utils.BrigadierUtils.*;
-
 public class UnicodeInfoCommand {
 
-    public static int unicodeInfo(CommandSource source, String string) {
-        source.to.sendMessage(new CustomEmbedBuilder()
+    public static CommandResult unicodeInfo(CommandSource source, String string) {
+        source.channel().sendMessage(new CustomEmbedBuilder()
                 .source(source)
                 .success()
                 .title("Unicode info")
@@ -24,13 +19,14 @@ public class UnicodeInfoCommand {
                 .field("Copypaste to Jav️a", Utils.lengthLimit("```java\n\"" + string.chars().boxed().map(x -> "\\u" + String.format("%04x", x)).collect(Collectors.joining()) + "\"```", Constants.EMBED_FIELD_VALUE), false)
                 .field("Length", string.length() + "", false)
                 .build()).queue();
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("unicodeinfo")
-                .then(argument("text", greedyString())
-                        .executes(context -> unicodeInfo(context.getSource(), context.getArgument("text", String.class)))
+    public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
+        dispatcher.register(Nodes.literal("unicodeinfo")
+                .documentation("Codepoint information for a piece of text")
+                .then(Nodes.greedyString("text")
+                        .executes(context -> unicodeInfo(context.source(), GreedyStringArgumentType.get(context, "text")))
                 )
         );
     }

@@ -1,35 +1,33 @@
 package p0nki.p0nkisassistant.arguments;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.arguments.ArgumentType;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import p0nki.commandparser.argument.ArgumentType;
+import p0nki.commandparser.command.CommandContext;
+import p0nki.commandparser.command.CommandReader;
+import p0nki.p0nkisassistant.utils.CommandSource;
 
-public abstract class GenericArgumentType<T> implements ArgumentType<T> {
+import java.util.Optional;
 
-    protected abstract String getIdByMention(String str);
+public abstract class GenericArgumentType<T> implements ArgumentType<CommandSource, T> {
 
-    protected abstract T parseById(String str);
+    protected abstract String getIdByMention(CommandSource source, String str);
 
-    protected abstract String formatException(String str);
+    protected abstract T parseById(CommandSource source, String str);
 
     @Override
-    public T parse(StringReader reader) throws CommandSyntaxException {
-        int begin = reader.getCursor();
-        if (!reader.canRead()) reader.skip();
-        while (reader.canRead() && reader.peek() != ' ') reader.skip();
-        String str = reader.getString().substring(begin, reader.getCursor());
+    public Optional<T> parse(CommandContext<CommandSource> context, CommandReader reader) {
+        String str = reader.readWhile(CommandReader.isNotSpace);
         try {
-            T value = parseById(str);
-            if (value != null) return value;
+            T value = parseById(context.source(), str);
+            if (value != null) return Optional.of(value);
         } catch (Throwable ignored) {
 
         }
         try {
-            T value = parseById(getIdByMention(str));
-            if (value != null) return value;
+            T value = parseById(context.source(), getIdByMention(context.source(), str));
+            if (value != null) return Optional.of(value);
         } catch (Throwable ignored) {
 
         }
-        throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherParseException().create(formatException(str));
+        return Optional.empty();
     }
 }

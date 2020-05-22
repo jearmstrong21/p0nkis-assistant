@@ -1,116 +1,62 @@
 package p0nki.p0nkisassistant.listeners;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.suggestion.Suggestion;
-import com.mojang.brigadier.tree.ArgumentCommandNode;
-import com.mojang.brigadier.tree.CommandNode;
-import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import p0nki.commandparser.command.CommandDispatcher;
+import p0nki.commandparser.command.CommandSyntaxException;
+import p0nki.commandparser.node.CommandNode;
+import p0nki.commandparser.node.LiteralCommandNode;
 import p0nki.p0nkisassistant.P0nkisAssistant;
 import p0nki.p0nkisassistant.commands.*;
 import p0nki.p0nkisassistant.data.BotConfig;
 import p0nki.p0nkisassistant.exceptions.PrettyException;
-import p0nki.p0nkisassistant.utils.CommandSource;
-import p0nki.p0nkisassistant.utils.CustomEmbedBuilder;
-import p0nki.p0nkisassistant.utils.Utils;
+import p0nki.p0nkisassistant.utils.*;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class CommandListener extends ListenerAdapter {
 
-    public static final int SUCCESS = 0;
-    public static final int IGNORE = 1;
-    public static final int FAILURE = 2;
 
     public CommandListener() {
 
     }
 
-    private CommandDispatcher<CommandSource> dispatcher;
+    private CommandDispatcher<CommandSource, CommandResult> dispatcher;
 
     public static CommandListener INSTANCE = new CommandListener();
 
-    public String dumpTree() {
-        StringBuilder sb = new StringBuilder();
-        List<CommandNode<CommandSource>> nodes = new ArrayList<>(dispatcher.getRoot().getChildren());
-        List<Integer> depths = nodes.stream().map(o -> 0).collect(Collectors.toList());
-        while (nodes.size() > 0) {
-            CommandNode<CommandSource> node = nodes.get(0);
-            nodes.remove(0);
-            int depth = depths.get(0);
-            depths.remove(0);
-
-            sb.append("\t".repeat(depth));
-            if (node instanceof LiteralCommandNode) {
-                sb.append(node.getName());
-            } else if (node instanceof ArgumentCommandNode) {
-                sb.append(node.getName()).append(": ").append(((ArgumentCommandNode<CommandSource, ?>) node).getType().toString());
-            } else {
-                sb.append(node.getName()).append(":[bad node type]:").append(node.getClass().toString());
-            }
-            if (node.getRedirect() != null) sb.append(" -> ").append(node.getRedirect());
-            sb.append("\n");
-            nodes.addAll(0, node.getChildren());
-            depths.addAll(0, IntStream.range(0, node.getChildren().size()).mapToObj(x -> depth + 1).collect(Collectors.toList()));
-        }
-        return sb.toString();
-    }
-
-    public static void waiting(CommandSource source) {
-        try {
-            source.message.addReaction("\u25b6\ufe0f").queue();
-        } catch (InsufficientPermissionException ignored) {
-
-        }
-    }
-
-    public static void success(CommandSource source) {
-        try {
-            source.message.addReaction("\u2705").queue();
-        } catch (InsufficientPermissionException ignored) {
-
-        }
-    }
-
-    public static void failure(CommandSource source) {
-        try {
-            source.message.addReaction("\u274c").queue();
-        } catch (InsufficientPermissionException ignored) {
-
-        }
+    public String generateHelp() {
+        return dispatcher.generateHelp();
     }
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
         dispatcher = new CommandDispatcher<>();
-        EchoCommand.register(dispatcher);
-        MembersCommand.register(dispatcher);
+        //REGISTER COMMANDS
         ImageCommand.register(dispatcher);
-        RolepollCommand.register(dispatcher);
         UnicodeInfoCommand.register(dispatcher);
-        ExecuteCommand.register(dispatcher);
-        DumpTreeCommand.register(dispatcher);
+        CounterCommand.register(dispatcher);
         DumpInformationCommand.register(dispatcher);
-        SourceInfoCommand.register(dispatcher);
+        EchoCommand.register(dispatcher);
         HelpCommand.register(dispatcher);
         MathCommand.register(dispatcher);
-        CounterCommand.register(dispatcher);
-        System.out.println(dumpTree());
+        MembersCommand.register(dispatcher);
+        RolepollCommand.register(dispatcher);
+        SourceInfoCommand.register(dispatcher);
+        PingCommand.register(dispatcher);
+        streamCommandStarts();
+        System.out.println(dispatcher.generateHelp());
     }
 
     public String getPrefix(CommandSource source) {
         BotConfig botConfig = BotConfig.get();
-        if (source.from instanceof TextChannel) {
+        if (source.isGuild()) {
             if (botConfig.guildPrefixes.containsKey(source.guild().getId())) {
                 return botConfig.guildPrefixes.get(source.guild().getId());
             }
@@ -134,20 +80,30 @@ public class CommandListener extends ListenerAdapter {
         return null;
     }
 
+    private Stream<String> streamCommandStarts() {
+        return dispatcher.getRoot().getChildren().stream().flatMap(node -> {
+            if (node instanceof LiteralCommandNode) {
+                return ((LiteralCommandNode<CommandSource, CommandResult>) node).getLiterals().stream();
+            }
+            throw new IllegalArgumentException(node.toString());
+        });
+    }
+
     @SuppressWarnings("UnusedReturnValue")
-    public int runCommand(CommandSource source, String command) {
+    public CommandResult runCommand(CommandSource source, String command) {
         command = command.trim();
-        if (source.message.getAuthor().isBot()) return CommandListener.IGNORE;
-        if (dispatcher.getRoot().getChildren().stream().map(CommandNode::getName).noneMatch(command::startsWith))
-            return CommandListener.IGNORE;
+        if (source.user().isBot()) return CommandResult.IGNORE;
+        if (streamCommandStarts().noneMatch(command::startsWith))
+            return CommandResult.IGNORE;
         try {
-            waiting(source);
-            int result = dispatcher.execute(command, source);
-            if (result == SUCCESS) success(source);
-            else if (result == FAILURE) failure(source);
+            source.message().addReaction(Constants.UNICODE_WAITING).queue();
+            CommandResult result = dispatcher.run(source, command);
+            if (result == CommandResult.SUCCESS)
+                source.message().addReaction(Constants.UNICODE_SUCCESS).queue();
+            else if (result == CommandResult.FAILURE) source.message().addReaction(Constants.UNICODE_FAILURE).queue();
             return result;
         } catch (PrettyException pretty) {
-            source.to.sendMessage(new CustomEmbedBuilder()
+            source.channel().sendMessage(new CustomEmbedBuilder()
                     .title(pretty.getTitle())
                     .description(pretty.getDescription())
                     .failure()
@@ -157,19 +113,19 @@ public class CommandListener extends ListenerAdapter {
             String message = cse.getMessage();
             if (message.startsWith("Could not parse command: "))
                 message = message.replaceFirst("Could not parse command: ", "");
-            List<Suggestion> suggestionList = dispatcher.getCompletionSuggestions(dispatcher.parse(command + " ", source)).join().getList();
-            String suggestions = suggestionList.stream().map(Suggestion::getText).collect(Collectors.joining(", "));
-            source.to.sendMessage(new CustomEmbedBuilder()
+            List<CommandNode<CommandSource, CommandResult>> suggestionsList = dispatcher.descendTree(source, command).nodes;
+            String suggestions = suggestionsList.stream().map(CommandNode::toString).collect(Collectors.joining(", "));
+            source.channel().sendMessage(new CustomEmbedBuilder()
                     .title("❌ Invalid command syntax ❌")
                     .description(message)
-                    .conditional(suggestionList.size() > 0, b -> b.field("Suggestions", suggestions, false))
-                    .conditional(suggestionList.size() == 0, b -> b.field("No suggestions", "", false))
+                    .conditional(suggestionsList.size() > 0, b -> b.field("Suggestions", suggestions, false))
+                    .conditional(suggestionsList.size() == 0, b -> b.field("No suggestions", "", false))
                     .failure()
                     .source(source)
                     .build()
             ).queue();
         } catch (PermissionException exc) {
-            source.to.sendMessage(new CustomEmbedBuilder()
+            source.channel().sendMessage(new CustomEmbedBuilder()
                     .failure()
                     .source(source)
                     .title("Permission exception")
@@ -179,8 +135,8 @@ public class CommandListener extends ListenerAdapter {
             Utils.report(ugly, command, source);
             ugly.printStackTrace();
         }
-        failure(source);
-        return FAILURE;
+        source.message().addReaction(Constants.UNICODE_FAILURE).queue();
+        return CommandResult.FAILURE;
     }
 
     @Override

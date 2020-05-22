@@ -1,14 +1,14 @@
 package p0nki.p0nkisassistant.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import p0nki.commandparser.argument.IntegerArgumentType;
+import p0nki.commandparser.command.CommandDispatcher;
 import p0nki.p0nkisassistant.P0nkisAssistant;
-import p0nki.p0nkisassistant.listeners.CommandListener;
-import p0nki.p0nkisassistant.utils.CommandSource;
-import p0nki.p0nkisassistant.utils.Constants;
-import p0nki.p0nkisassistant.utils.Utils;
+import p0nki.p0nkisassistant.arguments.GuildArgumentType;
+import p0nki.p0nkisassistant.arguments.TextChannelArgumentType;
+import p0nki.p0nkisassistant.utils.*;
 
 import java.util.Collections;
 import java.util.Date;
@@ -16,31 +16,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static p0nki.p0nkisassistant.utils.BrigadierUtils.*;
-
 public class DumpInformationCommand {
 
-    public static int dumpGuilds(CommandSource source) {
+    public static CommandResult dumpGuilds(CommandSource source) {
         String guilds = P0nkisAssistant.jda.getGuilds().stream().map(Object::toString).collect(Collectors.joining("\n"));
         if (guilds.length() > Constants.MESSAGE_SIZE - 7) {
-            source.to.sendFile(guilds.getBytes(), "GUILDS DUMP " + new Date().toString()).queue();
+            source.channel().sendFile(guilds.getBytes(), "GUILDS DUMP " + new Date().toString()).queue();
         } else {
-            source.to.sendMessage("```\n" + guilds + "```").queue();
+            source.channel().sendMessage("```\n" + guilds + "```").queue();
         }
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static int dumpChannels(CommandSource source, Guild guild) {
+    public static CommandResult dumpChannels(CommandSource source, Guild guild) {
         String channels = guild.getChannels().stream().map(Object::toString).collect(Collectors.joining("\n"));
         if (channels.length() > Constants.MESSAGE_SIZE - 7) {
-            source.to.sendFile(channels.getBytes(), "CHANNELS DUMP FOR GUILD " + guild + " " + new Date().toString()).queue();
+            source.channel().sendFile(channels.getBytes(), "CHANNELS DUMP FOR GUILD " + guild + " " + new Date().toString()).queue();
         } else {
-            source.to.sendMessage("```\n" + channels + "```").queue();
+            source.channel().sendMessage("```\n" + channels + "```").queue();
         }
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static int dumpMessages(CommandSource source, TextChannel channel, int count) {
+    public static CommandResult dumpMessages(CommandSource source, TextChannel channel, int count) {
         List<Message> messageList = channel.getIterableHistory().cache(false).limit(count).complete();
         Collections.reverse(messageList);
         StringBuilder messages = new StringBuilder();
@@ -62,29 +60,30 @@ public class DumpInformationCommand {
             messages.append("\n");
         }
         if (messages.length() > Constants.MESSAGE_SIZE - 7) {
-            source.to.sendFile(messages.toString().getBytes(), "MESSAGES DUMP FOR CHANNEL " + channel + " " + new Date().toString()).queue();
+            source.channel().sendFile(messages.toString().getBytes(), "MESSAGES DUMP FOR CHANNEL " + channel + " " + new Date().toString()).queue();
         } else {
-            source.to.sendMessage("```\n" + messages + "```").queue();
+            source.channel().sendMessage("```\n" + messages + "```").queue();
         }
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("dumpguilds")
-                .requires(Utils.isOwner())
-                .executes(context -> dumpGuilds(context.getSource()))
+    public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
+        dispatcher.register(Nodes.literal("dumpguilds")
+                .requires(Requirements.IS_OWNER)
+                .executes(context -> dumpGuilds(context.source()))
         );
-        dispatcher.register(literal("dumpchannels")
-                .requires(Utils.isOwner())
-                .then(argument("guild", guild())
-                        .executes(context -> dumpChannels(context.getSource(), context.getArgument("guild", Guild.class)))
+        dispatcher.register(Nodes.literal("dumpchannels")
+                .requires(Requirements.IS_OWNER)
+                .then(Nodes.guild("guild")
+                        .executes(context -> dumpChannels(context.source(), GuildArgumentType.get(context, "guild"))
+                        )
                 )
         );
-        dispatcher.register(literal("dumpmessages")
-                .requires(Utils.isOwner())
-                .then(argument("channel", channel())
-                        .then(argument("count", integer())
-                                .executes(context -> dumpMessages(context.getSource(), context.getArgument("channel", TextChannel.class), context.getArgument("count", Integer.class)))
+        dispatcher.register(Nodes.literal("dumpmessages")
+                .requires(Requirements.IS_OWNER)
+                .then(Nodes.textChannel("channel")
+                        .then(Nodes.integer("count", 1, 100)
+                                .executes(context -> dumpMessages(context.source(), TextChannelArgumentType.get(context, "channel"), IntegerArgumentType.get(context, "count")))
                         )
                 )
         );

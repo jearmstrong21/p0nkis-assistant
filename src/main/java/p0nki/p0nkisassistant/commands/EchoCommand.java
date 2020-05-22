@@ -1,24 +1,22 @@
 package p0nki.p0nkisassistant.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
-import p0nki.p0nkisassistant.listeners.CommandListener;
+import p0nki.commandparser.argument.GreedyStringArgumentType;
+import p0nki.commandparser.command.CommandDispatcher;
+import p0nki.p0nkisassistant.utils.CommandResult;
 import p0nki.p0nkisassistant.utils.CommandSource;
-import p0nki.p0nkisassistant.utils.Utils;
-
-import static p0nki.p0nkisassistant.utils.BrigadierUtils.*;
+import p0nki.p0nkisassistant.utils.Nodes;
 
 public class EchoCommand {
 
-    public static int echo(CommandSource source, String text) {
-        source.to.sendMessage(text).queue();
-        return CommandListener.SUCCESS;
+    public static CommandResult echo(CommandSource source, String text) {
+        source.channel().sendMessage(text).queue();
+        return CommandResult.SUCCESS;
     }
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("echo")
-                .requires(Utils.isOwner())
-                .then(argument("text", greedyString())
-                        .executes(context -> echo(context.getSource(), context.getArgument("text", String.class)))
+    public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
+        dispatcher.register(Nodes.literal("echo")
+                .then(Nodes.greedyString("text")
+                        .executes(context -> echo(context.source(), GreedyStringArgumentType.get(context, "text")))
                 )
         );
     }

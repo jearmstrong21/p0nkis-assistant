@@ -18,8 +18,9 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile "net.dv8tion:JDA:4.1.1_101"
     compile "club.minnced:discord-webhooks:0.1.6"
-    compile 'com.mojang:brigadier:1.0.17'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation("com.google.guava:guava:29.0-jre")
+    implementation 'com.github.jearmstrong21:CommandParser:master-SNAPSHOT'
 }
 
 apply plugin: 'application'

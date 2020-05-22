@@ -1,27 +1,27 @@
 package p0nki.p0nkisassistant.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
+import p0nki.commandparser.command.CommandDispatcher;
 import p0nki.p0nkisassistant.P0nkisAssistant;
 import p0nki.p0nkisassistant.listeners.CommandListener;
+import p0nki.p0nkisassistant.utils.CommandResult;
 import p0nki.p0nkisassistant.utils.CommandSource;
-
-import static p0nki.p0nkisassistant.utils.BrigadierUtils.literal;
+import p0nki.p0nkisassistant.utils.Nodes;
 
 public class HelpCommand {
 
-    public static int help(CommandSource source) {
-        source.to.sendMessage(
+    public static CommandResult help(CommandSource source) {
+        source.channel().sendMessage(
                 "My prefix here is `" + CommandListener.INSTANCE.getPrefix(source) + "`.\n" +
                         "Invite link: " + P0nkisAssistant.jda.getInviteUrl() + "\n" +
                         "Commands:\n" +
-                        "```\n" + CommandListener.INSTANCE.dumpTree() + "```")
+                        "```\n" + CommandListener.INSTANCE.generateHelp() + "```")
                 .queue(message -> message.suppressEmbeds(true).queue());
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("help")
-                .executes(context -> help(context.getSource()))
+    public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
+        dispatcher.register(Nodes.literal("help")
+                .executes(context -> help(context.source()))
         );
     }
 

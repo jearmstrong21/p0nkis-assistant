@@ -1,28 +1,24 @@
 package p0nki.p0nkisassistant.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import p0nki.commandparser.command.CommandDispatcher;
 import p0nki.p0nkisassistant.P0nkisAssistant;
-import p0nki.p0nkisassistant.listeners.CommandListener;
-import p0nki.p0nkisassistant.utils.CommandSource;
-import p0nki.p0nkisassistant.utils.CustomEmbedBuilder;
-import p0nki.p0nkisassistant.utils.Utils;
+import p0nki.p0nkisassistant.utils.*;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static p0nki.p0nkisassistant.utils.BrigadierUtils.literal;
-
 public class MembersCommand {
 
-    public static int onlineMembers(CommandSource source) {
+    public static CommandResult onlineMembers(CommandSource source) {
         List<Member> members = source.guild().getMembers();
-        source.to.sendMessage(new CustomEmbedBuilder()
+        source.channel().sendMessage(new CustomEmbedBuilder()
                 .source(source)
                 .success()
+                .title("Online members, collected by top role")
                 .description(members.stream()
                         .filter(member -> member.getOnlineStatus() != OnlineStatus.OFFLINE)
                         .collect(Collectors.groupingBy(member -> {
@@ -38,14 +34,15 @@ public class MembersCommand {
                             return "weird top role, probably a bug or uncached members: " + n;
                         }).collect(Collectors.joining("\n")))
                 .build()).queue();
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static int members(CommandSource source) {
+    public static CommandResult members(CommandSource source) {
         List<Member> members = source.guild().getMembers();
-        source.to.sendMessage(new CustomEmbedBuilder()
+        source.channel().sendMessage(new CustomEmbedBuilder()
                 .source(source)
                 .success()
+                .title("All members, collected by top role")
                 .description(members.stream()
                         .collect(Collectors.groupingBy(member -> {
                             if (member.getRoles().size() == 0) return "null";
@@ -60,14 +57,15 @@ public class MembersCommand {
                             return "no top role: " + n;
                         }).collect(Collectors.joining("\n")))
                 .build()).queue();
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static int offlineMembers(CommandSource source) {
+    public static CommandResult offlineMembers(CommandSource source) {
         List<Member> members = source.guild().getMembers();
-        source.to.sendMessage(new CustomEmbedBuilder()
+        source.channel().sendMessage(new CustomEmbedBuilder()
                 .source(source)
                 .success()
+                .title("Offline members, collected by top role")
                 .description(members.stream()
                         .filter(member -> member.getOnlineStatus() == OnlineStatus.OFFLINE)
                         .collect(Collectors.groupingBy(member -> {
@@ -83,15 +81,24 @@ public class MembersCommand {
                             return "weird top role, probably a bug or uncached members: " + n;
                         }).collect(Collectors.joining("\n")))
                 .build()).queue();
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("members")
-                .requires(Utils.isFromGuild())
-                .then(literal("all").executes(context -> members(context.getSource())))
-                .then(literal("online").executes(context -> onlineMembers(context.getSource())))
-                .then(literal("offline").executes(context -> offlineMembers(context.getSource())))
+    public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
+        dispatcher.register(Nodes.literal("members")
+                .requires(Requirements.IN_GUILD)
+                .then(Nodes.literal("all")
+                        .documentation("Shows top roles of all members")
+                        .executes(context -> members(context.source()))
+                )
+                .then(Nodes.literal("on", "online")
+                        .documentation("Shows top roles of online members only")
+                        .executes(context -> onlineMembers(context.source()))
+                )
+                .then(Nodes.literal("off", "offline")
+                        .documentation("Shows top roles of offline members only")
+                        .executes(context -> offlineMembers(context.source()))
+                )
         );
     }
 

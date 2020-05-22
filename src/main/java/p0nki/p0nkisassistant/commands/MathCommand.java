@@ -1,29 +1,29 @@
 package p0nki.p0nkisassistant.commands;
 
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import p0nki.p0nkisassistant.listeners.CommandListener;
+import p0nki.commandparser.argument.GreedyStringArgumentType;
+import p0nki.commandparser.command.CommandDispatcher;
+import p0nki.p0nkisassistant.utils.CommandResult;
 import p0nki.p0nkisassistant.utils.CommandSource;
-
-import static p0nki.p0nkisassistant.utils.BrigadierUtils.*;
+import p0nki.p0nkisassistant.utils.Nodes;
 
 public class MathCommand {
 
-    public static int math(CommandSource source, String expr) {
+    public static CommandResult math(CommandSource source, String expr) {
         expr = expr.replace(" ", "");
-        if (expr.equals("9+10")) source.to.sendMessage("21").queue();
-        else if (expr.equals("10+9")) source.to.sendMessage("19").queue();
+        if (expr.equals("9+10")) source.channel().sendMessage("21").queue();
+        else if (expr.equals("10+9")) source.channel().sendMessage("19").queue();
         else {
-            source.to.sendMessage("Unable to parse. Try something simpler.").queue();
-            return CommandListener.FAILURE;
+            source.channel().sendMessage("Unable to parse. Try something simpler.").queue();
+            return CommandResult.FAILURE;
         }
-        return CommandListener.SUCCESS;
+        return CommandResult.SUCCESS;
     }
 
-    public static void register(CommandDispatcher<CommandSource> dispatcher) {
-        dispatcher.register(literal("math")
-                .then(argument("expr", greedyString())
-                        .executes(context -> math(context.getSource(), StringArgumentType.getString(context, "expr")))
+    public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
+        dispatcher.register(Nodes.literal("math")
+                .documentation("The one and only math evaluate command. Example usage: `math 9+10`")
+                .then(Nodes.greedyString("expr")
+                        .executes(context -> math(context.source(), GreedyStringArgumentType.get(context, "expr")))
                 )
         );
     }

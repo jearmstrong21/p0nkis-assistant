@@ -34,5 +34,6 @@ public class Constants {
 
     public static final String UNICODE_SUCCESS = "\u2705";
     public static final String UNICODE_FAILURE = "\u274c";
+    public static final String UNICODE_WAITING = "\u25b6\ufe0f";
 
 }
