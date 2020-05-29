@@ -156,8 +156,6 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
-        System.out.println(event.getMessage().getEmotesBag());
-        System.out.println(event.getMessage().getContentRaw());
         if (FunListener.INSTANCE.isHMM(CommandSource.of(event), event.getMessage().getContentRaw())) return;
         String msg = event.getMessage().getContentRaw();
         CommandSource source = CommandSource.of(event);

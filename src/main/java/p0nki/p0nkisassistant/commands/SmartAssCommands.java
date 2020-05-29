@@ -23,7 +23,7 @@ public class SmartAssCommands {
                 .category("smartass")
                 .documentation("Let me google that (for you)")
                 .then(Nodes.greedyString("text").executes(context -> {
-                    String msg = "http://lmgtfy.com/?q=" + URLEncoder.encode(GreedyStringArgumentType.get(context, "text"), StandardCharsets.UTF_8);
+                    String msg = "<http://lmgtfy.com/?q=" + URLEncoder.encode(GreedyStringArgumentType.get(context, "text"), StandardCharsets.UTF_8) + ">";
                     if (msg.length() > 2000) msg = msg.substring(0, 2000); // cut off at 2k chars
                     context.source().channel().sendMessage(msg).queue();
                     return CommandResult.SUCCESS;
