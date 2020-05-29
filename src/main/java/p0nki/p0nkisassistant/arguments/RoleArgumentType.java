@@ -2,7 +2,6 @@ package p0nki.p0nkisassistant.arguments;
 
 import net.dv8tion.jda.api.entities.Role;
 import p0nki.commandparser.command.CommandContext;
-import p0nki.p0nkisassistant.P0nkisAssistant;
 import p0nki.p0nkisassistant.utils.CommandSource;
 
 public class RoleArgumentType extends GenericArgumentType<Role> {
@@ -18,7 +17,7 @@ public class RoleArgumentType extends GenericArgumentType<Role> {
 
     @Override
     protected Role parseById(CommandSource source, String str) {
-        return P0nkisAssistant.jda.getRoleById(str);
+        return source.guild().getRoleById(str);
     }
 
     @Override

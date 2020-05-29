@@ -40,6 +40,7 @@ public class ImageCommand {
 
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("vimage")
+                .category("misc")
                 .documentation("the most interesting image generation command of all time")
                 .executes(context -> vimage(context.source()))
         );

@@ -8,7 +8,13 @@ import p0nki.commandparser.node.ArgumentCommandNode;
 import p0nki.commandparser.node.LiteralCommandNode;
 import p0nki.p0nkisassistant.arguments.*;
 
+import java.util.Optional;
+
 public class Nodes {
+
+    public static LiteralCommandNode<CommandSource, CommandResult> literal(Optional<String> category, String... names) {
+        return new LiteralCommandNode<>(category, names);
+    }
 
     public static LiteralCommandNode<CommandSource, CommandResult> literal(String... names) {
         return new LiteralCommandNode<>(names);

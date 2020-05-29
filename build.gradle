@@ -5,8 +5,6 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
-
 repositories {
     mavenCentral()
     jcenter()
@@ -20,7 +18,7 @@ dependencies {
     compile "club.minnced:discord-webhooks:0.1.6"
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation("com.google.guava:guava:29.0-jre")
-    implementation 'com.github.jearmstrong21:CommandParser:master-SNAPSHOT'
+    implementation 'com.github.jearmstrong21:CommandParser:1.2.1'
 }
 
 apply plugin: 'application'

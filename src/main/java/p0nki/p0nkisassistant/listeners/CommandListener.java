@@ -15,8 +15,7 @@ import p0nki.p0nkisassistant.exceptions.PrettyException;
 import p0nki.p0nkisassistant.utils.*;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,9 +30,6 @@ public class CommandListener extends ListenerAdapter {
 
     public static CommandListener INSTANCE = new CommandListener();
 
-    public String generateHelp() {
-        return dispatcher.generateHelp();
-    }
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
@@ -44,14 +40,33 @@ public class CommandListener extends ListenerAdapter {
         CounterCommand.register(dispatcher);
         DumpInformationCommand.register(dispatcher);
         EchoCommand.register(dispatcher);
-        HelpCommand.register(dispatcher);
+        HelpCommands.register(dispatcher);
         MathCommand.register(dispatcher);
-        MembersCommand.register(dispatcher);
+        MembersCommands.register(dispatcher);
         RolepollCommand.register(dispatcher);
         SourceInfoCommand.register(dispatcher);
         PingCommand.register(dispatcher);
+        SmartAssCommands.register(dispatcher);
+        SnowflakeCommand.register(dispatcher);
         streamCommandStarts();
-        System.out.println(dispatcher.generateHelp());
+        System.out.println(genericHelp());
+    }
+
+    public String genericHelp() {
+        Map<String, Integer> map = new HashMap<>();
+        dispatcher.getRoot().getChildren().forEach(node -> {
+            String category = node.getCategory().isPresent() ? node.getCategory().get() : "none";
+            map.put(category, 1 + map.getOrDefault(category, 0));
+        });
+        return map.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(entry -> entry.getKey() + ": " + entry.getValue()).collect(Collectors.joining("\n"));
+    }
+
+    public String specificHelp(Optional<String> category) {
+        return dispatcher.generateHelp(category);
+    }
+
+    public Set<String> getCategories() {
+        return dispatcher.getCategories().stream().map(optional -> optional.orElse("[no category")).collect(Collectors.toSet());
     }
 
     public String getPrefix(CommandSource source) {
@@ -141,6 +156,8 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+        System.out.println(event.getMessage().getEmotesBag());
+        System.out.println(event.getMessage().getContentRaw());
         if (FunListener.INSTANCE.isHMM(CommandSource.of(event), event.getMessage().getContentRaw())) return;
         String msg = event.getMessage().getContentRaw();
         CommandSource source = CommandSource.of(event);

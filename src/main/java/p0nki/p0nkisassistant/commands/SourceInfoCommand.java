@@ -23,6 +23,7 @@ public class SourceInfoCommand {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("sourceinfo")
                 .documentation("Provides information about where this command was executed")
+                .category("misc")
                 .executes(context -> sourceInfo(context.source()))
         );
     }

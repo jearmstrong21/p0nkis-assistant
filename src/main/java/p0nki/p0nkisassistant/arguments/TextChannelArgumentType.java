@@ -2,7 +2,6 @@ package p0nki.p0nkisassistant.arguments;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 import p0nki.commandparser.command.CommandContext;
-import p0nki.p0nkisassistant.P0nkisAssistant;
 import p0nki.p0nkisassistant.utils.CommandSource;
 
 public class TextChannelArgumentType extends GenericArgumentType<TextChannel> {
@@ -18,7 +17,7 @@ public class TextChannelArgumentType extends GenericArgumentType<TextChannel> {
 
     @Override
     protected TextChannel parseById(CommandSource source, String str) {
-        return P0nkisAssistant.jda.getTextChannelById(str);
+        return source.guild().getTextChannelById(str);
     }
 
     @Override

@@ -22,6 +22,7 @@ public class MathCommand {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("math")
                 .documentation("The one and only math evaluate command. Example usage: `math 9+10`")
+                .category("misc")
                 .then(Nodes.greedyString("expr")
                         .executes(context -> math(context.source(), GreedyStringArgumentType.get(context, "expr")))
                 )

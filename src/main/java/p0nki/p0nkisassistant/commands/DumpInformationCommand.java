@@ -70,10 +70,14 @@ public class DumpInformationCommand {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("dumpguilds")
                 .requires(Requirements.IS_OWNER)
+                .category("dumps")
+                .documentation("Dumps guilds")
                 .executes(context -> dumpGuilds(context.source()))
         );
         dispatcher.register(Nodes.literal("dumpchannels")
                 .requires(Requirements.IS_OWNER)
+                .category("dumps")
+                .documentation("Dumps channels in guild")
                 .then(Nodes.guild("guild")
                         .executes(context -> dumpChannels(context.source(), GuildArgumentType.get(context, "guild"))
                         )
@@ -81,6 +85,8 @@ public class DumpInformationCommand {
         );
         dispatcher.register(Nodes.literal("dumpmessages")
                 .requires(Requirements.IS_OWNER)
+                .category("dumps")
+                .documentation("Dumps messages in a channel")
                 .then(Nodes.textChannel("channel")
                         .then(Nodes.integer("count", 1, 100)
                                 .executes(context -> dumpMessages(context.source(), TextChannelArgumentType.get(context, "channel"), IntegerArgumentType.get(context, "count")))

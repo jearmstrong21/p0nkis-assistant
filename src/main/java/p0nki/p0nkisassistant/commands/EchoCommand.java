@@ -5,6 +5,7 @@ import p0nki.commandparser.command.CommandDispatcher;
 import p0nki.p0nkisassistant.utils.CommandResult;
 import p0nki.p0nkisassistant.utils.CommandSource;
 import p0nki.p0nkisassistant.utils.Nodes;
+import p0nki.p0nkisassistant.utils.Requirements;
 
 public class EchoCommand {
 
@@ -15,6 +16,9 @@ public class EchoCommand {
 
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("echo")
+                .documentation("Echos back the text you give it")
+                .requires(Requirements.IS_OWNER)
+                .category("misc")
                 .then(Nodes.greedyString("text")
                         .executes(context -> echo(context.source(), GreedyStringArgumentType.get(context, "text")))
                 )

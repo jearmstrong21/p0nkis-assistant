@@ -9,16 +9,17 @@ import p0nki.p0nkisassistant.utils.Requirements;
 
 public class RolepollCommand {
 
-    public static CommandResult updateRolepolls(CommandSource source) {
-        RolepollListener.INSTANCE.updateAllRolepollsAndLog();
-        return CommandResult.SUCCESS;
-    }
-
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("rolepoll")
+                .requires(Requirements.IS_OWNER)
+                .category("misc")
+                .documentation("Updates all rolepolls")
                 .then(Nodes.literal("update")
                         .requires(Requirements.IS_OWNER)
-                        .executes(context -> updateRolepolls(context.source()))
+                        .executes(context -> {
+                            RolepollListener.INSTANCE.updateAllRolepollsAndLog();
+                            return CommandResult.SUCCESS;
+                        })
                 )
         );
     }

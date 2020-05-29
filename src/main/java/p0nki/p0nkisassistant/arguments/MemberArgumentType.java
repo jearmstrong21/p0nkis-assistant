@@ -16,10 +16,7 @@ public class MemberArgumentType extends GenericArgumentType<Member> {
 
     @Override
     protected Member parseById(CommandSource source, String str) {
-        if (source.isGuild()) {
-            return source.guild().getMemberById(str);
-        }
-        return null;
+        return source.guild().getMemberById(str);
     }
 
     @Override

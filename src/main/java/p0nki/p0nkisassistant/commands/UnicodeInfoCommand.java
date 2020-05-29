@@ -25,6 +25,7 @@ public class UnicodeInfoCommand {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("unicodeinfo")
                 .documentation("Codepoint information for a piece of text")
+                .category("misc")
                 .then(Nodes.greedyString("text")
                         .executes(context -> unicodeInfo(context.source(), GreedyStringArgumentType.get(context, "text")))
                 )

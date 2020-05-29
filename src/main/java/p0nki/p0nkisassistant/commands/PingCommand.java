@@ -24,6 +24,7 @@ public class PingCommand {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("ping")
                 .documentation("Shows message send time, rest ping, and gateway ping")
+                .category("misc")
                 .executes(context -> ping(context.source()))
         );
     }

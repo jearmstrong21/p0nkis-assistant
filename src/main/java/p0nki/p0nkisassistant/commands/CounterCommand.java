@@ -62,6 +62,7 @@ public class CounterCommand {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("counter")
                 .requires(Requirements.IN_GUILD)
+                .category("counters")
                 .documentation("Counter to increment and decrement unsigned integers by name. Stored per-guild.")
                 .then(Nodes.quotedString("name")
                         .documentation("`counter [name]` shows the value of that counter. `counter [name]++` and `counter [name]--` increment and decrement the counter, respectively. ")
@@ -71,6 +72,7 @@ public class CounterCommand {
         );
         dispatcher.register(Nodes.literal("counters")
                 .requires(Requirements.IN_GUILD)
+                .category("counters")
                 .documentation("Shows all counters for this guild")
                 .executes(context -> dump(context.source()))
         );
