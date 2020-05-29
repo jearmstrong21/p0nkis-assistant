@@ -48,6 +48,7 @@ public class CommandListener extends ListenerAdapter {
         PingCommand.register(dispatcher);
         SmartAssCommands.register(dispatcher);
         SnowflakeCommand.register(dispatcher);
+        ClojureCommands.register(dispatcher);
         streamCommandStarts();
         System.out.println(genericHelp());
     }
