@@ -67,7 +67,7 @@ public class SnowflakeCommand {
     }
 
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
-        dispatcher.register(Nodes.literal("snowflake", "ss")
+        dispatcher.register(Nodes.literal("snowflake", "sf")
                 .category("misc")
                 .documentation("Snowflake information for emote, user, guild, channel, and most entities")
                 .then(Nodes.emote("emote").executes(snowflake(context -> EmoteArgumentType.get(context, "emote").getId())))
