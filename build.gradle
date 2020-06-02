@@ -19,7 +19,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation("com.google.guava:guava:29.0-jre")
     implementation 'com.github.jearmstrong21:CommandParser:1.2.1'
-    implementation 'com.github.jearmstrong21:SimpleClojure:1.0'
+    implementation 'com.github.jearmstrong21:EspressoLisp:2.0.1'
 }
 
 apply plugin: 'application'

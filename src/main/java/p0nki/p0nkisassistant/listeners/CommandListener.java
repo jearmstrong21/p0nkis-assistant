@@ -48,7 +48,7 @@ public class CommandListener extends ListenerAdapter {
         PingCommand.register(dispatcher);
         SmartAssCommands.register(dispatcher);
         SnowflakeCommand.register(dispatcher);
-        ClojureCommands.register(dispatcher);
+        LispCommands.register(dispatcher);
         streamCommandStarts();
         System.out.println(genericHelp());
     }
@@ -112,7 +112,7 @@ public class CommandListener extends ListenerAdapter {
         if (streamCommandStarts().noneMatch(command::startsWith))
             return CommandResult.IGNORE;
         try {
-            source.message().addReaction(Constants.UNICODE_WAITING).queue();
+//            source.message().addReaction(Constants.UNICODE_WAITING).queue();
             CommandResult result = dispatcher.run(source, command);
             if (result == CommandResult.SUCCESS)
                 source.message().addReaction(Constants.UNICODE_SUCCESS).queue();
