@@ -1,90 +1,49 @@
 package p0nki.p0nkisassistant.data;
 
-import net.dv8tion.jda.api.entities.User;
-import p0nki.p0nkisassistant.P0nkisAssistant;
-import p0nki.p0nkisassistant.utils.Utils;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class TricksConfig {
 
-    private final Map<String, Guild> guilds = new HashMap<>();
+    public List<Trick> tricks = new ArrayList<>();
 
-    public static TricksConfig get() {
-        return Utils.deserialize("tricks", TricksConfig.class);
-    }
+    public static class Source {
+        public String code;
+        public boolean isLisp;
 
-    public Set<String> guilds() {
-        return new HashSet<>(guilds.keySet());
-    }
-
-    public Guild guild(String id) {
-        if (!guilds.containsKey(id)) {
-            guilds.put(id, new Guild());
-            set();
+        public Source(String code, boolean isLisp) {
+            this.code = code;
+            this.isLisp = isLisp;
         }
-        return guilds.get(id);
     }
 
-    public void set() {
-        Utils.serialize("tricks", this, true);
+    public static class Owner {
+        public String owner;
+        public String guild;
+        public boolean isGlobal;
+
+        public Owner(String owner, String guild, boolean isGlobal) {
+            this.owner = owner;
+            this.guild = guild;
+            this.isGlobal = isGlobal;
+        }
     }
 
     public static class Trick {
+        public String name;
+        public Owner owner;
+        public Source source;
+        public Date created;
+        public Date modified;
 
-        private final String name;
-        private final String owner;
-        private final boolean isLisp;
-        public String source;
-
-        public Trick(String name, String owner, boolean isLisp, String source) {
+        public Trick(String name, Owner owner, Source source, Date created, Date modified) {
             this.name = name;
             this.owner = owner;
-            this.isLisp = isLisp;
             this.source = source;
+            this.created = created;
+            this.modified = modified;
         }
-
-        public String name() {
-            return name;
-        }
-
-        public boolean isLisp() {
-            return isLisp;
-        }
-
-        public User owner() {
-            return P0nkisAssistant.jda.getUserById(owner);
-        }
-
-    }
-
-    public static class Guild {
-
-        private final Map<String, Trick> tricks = new HashMap<>();
-
-        public Trick trick(String name) {
-            return tricks.get(name);
-        }
-
-        public boolean has(String name) {
-            return tricks.containsKey(name);
-        }
-
-        public void set(Trick trick) {
-            tricks.put(trick.name(), trick);
-        }
-
-        public void remove(String name) {
-            tricks.remove(name);
-        }
-
-        public Set<String> tricks() {
-            return new HashSet<>(tricks.keySet());
-        }
-
     }
 
 }

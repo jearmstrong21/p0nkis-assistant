@@ -4,9 +4,14 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import p0nki.commandparser.argument.GreedyStringArgumentType;
 import p0nki.commandparser.command.CommandDispatcher;
+import p0nki.espressolisp.adapter.LispMonadAdapter;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.library.LispStandardLibrary;
 import p0nki.espressolisp.object.LispObject;
+import p0nki.espressolisp.object.literal.LispCompleteFunctionLiteral;
+import p0nki.espressolisp.object.literal.LispStringLiteral;
+import p0nki.espressolisp.object.reference.LispReference;
+import p0nki.espressolisp.object.reference.LispStandardReferenceImpl;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenizer;
@@ -18,6 +23,8 @@ import p0nki.p0nkisassistant.utils.CommandSource;
 import p0nki.p0nkisassistant.utils.Constants;
 import p0nki.p0nkisassistant.utils.Nodes;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +42,9 @@ public class LispCommands {
         ctx.evaluate("(import 'std')");
         ctx.evaluate("(= println (. std 'println'))");
         ctx.evaluate("(= randf (. std 'randf'))");
+        //TODO put url_encode into LISP STANDARD LIBRARY
+        //TODO make TrickListener parse node list and evaluate those instead of hardcoding specific parses to allow for strings and stuff with spaces
+        ctx.set("url_encode", new LispReference("url_encode", true, new LispStandardReferenceImpl(new LispCompleteFunctionLiteral(List.of("arg1"), (LispMonadAdapter) (context, arg1) -> new LispStringLiteral(URLEncoder.encode(arg1.fullyDereference().asString().getValue(), StandardCharsets.UTF_8))))));
         return ctx;
     }
 
@@ -73,10 +83,21 @@ public class LispCommands {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("lisp")
                 .category("lisp")
-                .documentation("Lisp commands! Run `lisp --help` for more information")
-                .then(Nodes.literal("--help", "-h")
+                .documentation("EspressoLisp(tm) commands! Run `lisp --about` for more information")
+                .then(Nodes.literal("--about", "-a")
                         .executes(context -> {
-                            // TODO finish docs
+                            context.source().channel().sendMessage("Under construction").queue();
+                            return CommandResult.SUCCESS;
+                            // TODO fully doc language, link to public google doc in --about command?
+                            // TODO make it so that the owner (me) can always update or remove tricks
+                            // TODO convert `smartass` commands to !!xy and !!lmgtfy
+                            // TODO args parsing
+                            //  dynamic brigadier?
+                            //  no, just roll a custom miniparser
+                            //  how would this work?
+                            //  how does it work in K9 - just a single string literal? or a LispListLiteral of greedyString.split(" ")?
+                            // TODO number() cast just like str() cast in builtin
+                            // TODO Math library in 2.1 espressolisp release along with whitespace fix + whitespace escapes in strings?
                         })
                 )
                 .then(Nodes.literal("--reset", "-r")
