@@ -15,7 +15,10 @@ public class TrickCommands {
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("trick", "t")
                 .requires(Requirements.IN_GUILD)
+                .category("trick")
+                .documentation("Trick commands! Uses custom lisp interpreter, for more information run `lisp --help`")
                 .then(Nodes.literal("--list", "-l")
+                        .documentation("Lists tricks in the current guild")
                         .executes(context -> {
                             TricksConfig.Guild tricks = TricksConfig.get().guild(context.source().guild().getId());
                             String result = tricks.tricks().stream().sorted(Comparator.naturalOrder()).map(trick -> {
@@ -32,6 +35,7 @@ public class TrickCommands {
                         })
                 )
                 .then(Nodes.literal("--add", "-a")
+                        .documentation("Adds a trick")
                         .then(Nodes.literal("lisp", "lsp", "l")
                                 .then(Nodes.quotedString("name")
                                         .then(Nodes.greedyString("code")
@@ -75,7 +79,34 @@ public class TrickCommands {
                                 )
                         )
                 )
+                .then(Nodes.literal("--update", "-u")
+                        .documentation("Updates a preexisting trick")
+                        .then(Nodes.quotedString("name")
+                                .then(Nodes.greedyString("code")
+                                        .executes(context -> {
+                                            TricksConfig config = TricksConfig.get();
+                                            TricksConfig.Guild tricks = config.guild(context.source().guild().getId());
+                                            String name = QuotedStringArgumentType.get(context, "name");
+                                            if (tricks.has(name)) {
+                                                TricksConfig.Trick trick = tricks.trick(name);
+                                                if (trick.owner().equals(context.source().user()) || context.source().member().hasPermission(Permission.MESSAGE_MANAGE)) {
+                                                    trick.source = GreedyStringArgumentType.get(context, "code");
+                                                    config.set();
+                                                    context.source().channel().sendMessage("Updated trick").queue();
+                                                    return CommandResult.SUCCESS;
+                                                } else {
+                                                    context.source().channel().sendMessage("You don't have permission to update this trick").queue();
+                                                }
+                                            } else {
+                                                context.source().channel().sendMessage("No such trick").queue();
+                                            }
+                                            return CommandResult.FAILURE;
+                                        })
+                                )
+                        )
+                )
                 .then(Nodes.literal("--remove", "-r")
+                        .documentation("Removes a trick")
                         .then(Nodes.quotedString("name")
                                 .executes(context -> {
                                     TricksConfig config = TricksConfig.get();
@@ -100,6 +131,7 @@ public class TrickCommands {
                         )
                 )
                 .then(Nodes.literal("--info", "-i")
+                        .documentation("Returns info about a trick")
                         .then(Nodes.quotedString("name")
                                 .executes(context -> {
                                     TricksConfig.Guild tricks = TricksConfig.get().guild(context.source().guild().getId());
@@ -116,6 +148,7 @@ public class TrickCommands {
                         )
                 )
                 .then(Nodes.literal("--source", "-s")
+                        .documentation("Dumps source of a trick")
                         .then(Nodes.quotedString("name")
                                 .executes(context -> {
                                     TricksConfig.Guild tricks = TricksConfig.get().guild(context.source().guild().getId());

@@ -59,6 +59,8 @@ public class LispCommands {
             try {
                 future.get(timeout, TimeUnit.MILLISECONDS);
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                if (e.getCause() instanceof LispException) onException.accept((LispException) e.getCause());
+                e.printStackTrace();
                 onTimeout.run();
             } finally {
                 executor.shutdown();
@@ -70,180 +72,140 @@ public class LispCommands {
 
     public static void register(CommandDispatcher<CommandSource, CommandResult> dispatcher) {
         dispatcher.register(Nodes.literal("lisp")
-                        .category("lisp")
-                        .then(Nodes.literal("reset")
+                .category("lisp")
+                .documentation("Lisp commands! Run `lisp --help` for more information")
+                .then(Nodes.literal("--help", "-h")
+                        .executes(context -> {
+                            // TODO finish docs
+                        })
+                )
+                .then(Nodes.literal("--reset", "-r")
+                        .documentation("Resets your REPL")
+                        .executes(context -> {
+                            try {
+                                contexts.put(context.source().user().getId(), new LispContext(new Logger(), null));
+                                context.source().channel().sendMessage("Context reset").queue();
+                                return CommandResult.SUCCESS;
+                            } catch (LispException e) {
+                                context.source().channel().sendMessage("Unable to reset context").queue();
+                                return CommandResult.FAILURE;
+                            }
+                        })
+                )
+                .then(Nodes.literal("--tokens", "-to")
+                        .documentation("Dumps tokenization of code")
+                        .then(Nodes.greedyString("code")
                                 .executes(context -> {
-                                    try {
-                                        contexts.put(context.source().user().getId(), new LispContext(new Logger(), null));
-                                        context.source().channel().sendMessage("Context reset").queue();
-                                        return CommandResult.SUCCESS;
-                                    } catch (LispException e) {
-                                        context.source().channel().sendMessage("Unable to reset context").queue();
-                                        return CommandResult.FAILURE;
+                                    String code = GreedyStringArgumentType.get(context, "code");
+                                    List<LispToken> tokens = LispTokenizer.tokenize(code);
+                                    String result = tokens.stream().map(LispToken::toString).collect(Collectors.joining("\n"));
+                                    if (result.length() > Constants.MESSAGE_SIZE - 7) {
+                                        context.source().channel().sendFile(result.getBytes(), "Tokens.txt").queue();
+                                    } else {
+                                        context.source().channel().sendMessage("```\n" + result + "```").queue();
                                     }
+                                    return CommandResult.SUCCESS;
                                 })
                         )
-                        .then(Nodes.literal("tokenize", "tokens", "token", "to")
-                                .then(Nodes.greedyString("code")
-                                        .executes(context -> {
-                                            String code = GreedyStringArgumentType.get(context, "code");
-                                            List<LispToken> tokens = LispTokenizer.tokenize(code);
-                                            String result = tokens.stream().map(LispToken::toString).collect(Collectors.joining("\n"));
-                                            if (result.length() > Constants.MESSAGE_SIZE - 7) {
-                                                context.source().channel().sendFile(result.getBytes(), "Tokens.txt").queue();
-                                            } else {
-                                                context.source().channel().sendMessage("```\n" + result + "```").queue();
-                                            }
-                                            return CommandResult.SUCCESS;
-                                        })
-                                )
-                        )
-                        .then(Nodes.literal("tree", "tr")
-                                .then(Nodes.greedyString("code")
-                                        .executes(context -> {
-                                            String code = GreedyStringArgumentType.get(context, "code");
-                                            List<LispToken> tokens = LispTokenizer.tokenize(code);
-                                            try {
-                                                StringBuilder result = new StringBuilder();
-                                                LispTreeNode node = LispASTCreator.parse(tokens);
-                                                result.append(node.toDebugJSON().toString(2));
-                                                if (tokens.size() > 0) {
-                                                    context.source().channel().sendMessage("Extra tokens:\n```\n" + tokens.get(0).toString() + "```").queue();
-                                                    return CommandResult.FAILURE;
-                                                }
-                                                if (result.length() > Constants.MESSAGE_SIZE - 7) {
-                                                    context.source().channel().sendFile(result.toString().getBytes(), "Tree.txt").queue();
-                                                } else {
-                                                    context.source().channel().sendMessage("```\n" + result + "```").queue();
-                                                }
-                                                return CommandResult.SUCCESS;
-                                            } catch (LispException e) {
-                                                if (e.getToken() != null) {
-                                                    context.source().channel().sendMessage("Token error\n```\n" + code + "\n" + e.getMessage() + "\n\n" + e.getToken().toString() + "```").queue();
-                                                } else {
-                                                    context.source().channel().sendMessage("Runtime error\n```\n" + e.getMessage() + "```").queue();
-                                                }
-                                                return CommandResult.FAILURE;
-                                            }
-                                        })
-                                )
-                        )
-                        .then(Nodes.literal("eval", "e")
-                                .then(Nodes.greedyString("code")
-                                        .executes(context -> {
-                                            String code = GreedyStringArgumentType.get(context, "code");
-                                            LispContext ctx;
-                                            try {
-                                                ctx = get(context.source().user());
-                                            } catch (LispException e) {
-                                                context.source().channel().sendMessage("Failed to obtain context. Message: " + e.getMessage()).queue();
-                                                return CommandResult.FAILURE;
-                                            }
-                                            Message msg = context.source().channel().sendMessage("Evaluating ...").complete();
-                                            StringBuilder str = new StringBuilder("Evaluating...");
-                                            evaluate(ctx, code,
-                                                    () -> {
-                                                    },
-                                                    () -> msg.editMessage(str.append("\nTokenized and created AST")).queue(),
-                                                    () -> msg.editMessage(str.append("\nTimed out")).queue(),
-                                                    (e) -> {
-                                                        if (e.getToken() == null) {
-                                                            msg.editMessage(str.append("\nRuntime exception\n```\n").append(e.getMessage()).append("```")).queue();
-                                                        } else {
-                                                            msg.editMessage(str.append("\nParse exception\n```\n").append(e.getMessage()).append("```")).queue();
-                                                        }
-                                                    },
-                                                    (o) -> {
-                                                        str.append("\nObject:\n```=> ").append(o.lispStr());
-                                                        while (o.isLValue()) {
-                                                            o = o.get();
-                                                            str.append(" = ").append(o.lispStr());
-                                                        }
-                                                        msg.editMessage(str.append("```")).queue();
-                                                    },
-                                                    2000);
-                                            return CommandResult.IGNORE;
-                                        })
-                                )
-                        )
-//                                    Message msg = context.source().channel().sendMessage("Evaluating...").complete();
-//                                    List<LispToken> tokens = LispTokenizer.tokenize(code);
-//                                    try {
-//                                        LispTreeNode node = LispASTCreator.parse(tokens);
-//                                        if (tokens.size() > 0) {
-//                                            context.source().channel().sendMessage("Extra tokens:\n```\n" + tokens.get(0).toString() + "```").queue();
-//                                            return CommandResult.FAILURE;
-//                                        }
-//                                        msg.editMessage(msg.getContentRaw() + "\nTokenized and AST created").queue();
-//                                        StringBuilder result = new StringBuilder();
-//                                        ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-//                                        LispContext lispCtx = get(context.source().user());
-//                                        ((Logger) lispCtx.getLogger()).setBuffer(result);
-//                                        Future<Void> future = executor.submit(() -> {
-//                                            LispObject obj = node.evaluate(lispCtx);
-//                                            result.append("=> ").append(obj.lispStr());
-//                                            while (obj.isLValue()) {
-//                                                obj = obj.get();
-//                                                result.append(" = ").append(obj.lispStr());
-//                                            }
-//                                            result.append("\n");
-//                                            return null;
-//                                        });
-//                                        try {
-//                                            future.get(2, TimeUnit.SECONDS);
-//                                        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-//                                            msg.editMessage(msg.getContentRaw() + "\nTimed out").queue();
-//                                            return CommandResult.FAILURE;
-//                                        } finally {
-//                                            executor.shutdown();
-//                                        }
-//                                        ((Logger) lispCtx.getLogger()).setBuffer(null);
-//                                        if (tokens.size() > 0) {
-//                                            context.source().channel().sendMessage("Extra tokens after 100 node parses\n```\n" + tokens.get(0).toString() + "```").queue();
-//                                            return CommandResult.FAILURE;
-//                                        }
-//                                        if (result.length() > Constants.MESSAGE_SIZE - 7) {
-//                                            msg.delete().queue();
-//                                            context.source().channel().sendFile(result.toString().getBytes(), "Tree.txt").queue();
-//                                        } else {
-//                                            msg.editMessage("```\n" + result + "```").queue();
-//                                        }
-//                                        return CommandResult.SUCCESS;
-//                                    } catch (LispException e) {
-//                                        if (e.getToken() != null) {
-//                                            msg.editMessage(msg.getContentRaw() + "\nToken error\n```\n" + code + "\n" + e.getMessage() + "\n\n" + e.getToken().toString() + "```").queue();
-//                                        } else {
-//                                            msg.editMessage(msg.getContentRaw() + "\nRuntime error\n```\n" + e.getMessage() + "```").queue();
-//                                        }
-//                                        return CommandResult.FAILURE;
-//                                    }
-                        .then(Nodes.literal("keys", "k")
+                )
+                .then(Nodes.literal("--tree", "-tr")
+                        .documentation("Dumps and verifies correctness of AST, but does not evaluate")
+                        .then(Nodes.greedyString("code")
                                 .executes(context -> {
+                                    String code = GreedyStringArgumentType.get(context, "code");
+                                    List<LispToken> tokens = LispTokenizer.tokenize(code);
                                     try {
-                                        LispContext ctx = get(context.source().user());
-                                        StringBuilder builder = new StringBuilder();
-                                        ctx.keys().forEach(key -> {
-                                            builder.append(key).append(" => ");
-                                            LispObject obj = ctx.get(key);
-                                            builder.append(obj.lispStr());
-                                            while (obj.isLValue()) {
-                                                obj = obj.get();
-                                                builder.append(" = ").append(obj.lispStr());
-                                            }
-                                            builder.append("\n");
-                                        });
-                                        if (builder.length() > Constants.MESSAGE_SIZE - 7) {
-                                            context.source().channel().sendFile(builder.toString().getBytes(), "Keys.txt").queue();
+                                        StringBuilder result = new StringBuilder();
+                                        LispTreeNode node = LispASTCreator.parse(tokens);
+                                        result.append(node.toDebugJSON().toString(2));
+                                        if (tokens.size() > 0) {
+                                            context.source().channel().sendMessage("Extra tokens:\n```\n" + tokens.get(0).toString() + "```").queue();
+                                            return CommandResult.FAILURE;
+                                        }
+                                        if (result.length() > Constants.MESSAGE_SIZE - 7) {
+                                            context.source().channel().sendFile(result.toString().getBytes(), "Tree.txt").queue();
                                         } else {
-                                            context.source().channel().sendMessage("```\n" + builder + "```").queue();
+                                            context.source().channel().sendMessage("```\n" + result + "```").queue();
                                         }
                                         return CommandResult.SUCCESS;
                                     } catch (LispException e) {
-                                        context.source().channel().sendMessage("Unable to list context keys").queue();
+                                        if (e.getToken() != null) {
+                                            context.source().channel().sendMessage("Token error\n```\n" + code + "\n" + e.getMessage() + "\n\n" + e.getToken().toString() + "```").queue();
+                                        } else {
+                                            context.source().channel().sendMessage("Runtime error\n```\n" + e.getMessage() + "```").queue();
+                                        }
                                         return CommandResult.FAILURE;
                                     }
                                 })
                         )
+                )
+                .then(Nodes.literal("--eval", "-e")
+                        .documentation("Evaluates AST of code")
+                        .then(Nodes.greedyString("code")
+                                .executes(context -> {
+                                    String code = GreedyStringArgumentType.get(context, "code");
+                                    LispContext ctx;
+                                    try {
+                                        ctx = get(context.source().user());
+                                    } catch (LispException e) {
+                                        context.source().channel().sendMessage("Failed to obtain context. Message: " + e.getMessage()).queue();
+                                        return CommandResult.FAILURE;
+                                    }
+                                    Message msg = context.source().channel().sendMessage("Evaluating ...").complete();
+                                    StringBuilder str = new StringBuilder("Evaluating...");
+                                    evaluate(ctx, code,
+                                            () -> {
+                                            },
+                                            () -> msg.editMessage(str.append("\nTokenized and created AST")).queue(),
+                                            () -> msg.editMessage(str.append("\nTimed out")).queue(),
+                                            (e) -> {
+                                                if (e.getToken() == null) {
+                                                    msg.editMessage(str.append("\nRuntime exception\n```\n").append(e.getMessage()).append("```")).queue();
+                                                } else {
+                                                    msg.editMessage(str.append("\nParse exception\n```\n").append(e.getMessage()).append("```")).queue();
+                                                }
+                                            },
+                                            (o) -> {
+                                                str.append("\nObject:\n```=> ").append(o.lispStr());
+                                                while (o.isLValue()) {
+                                                    o = o.get();
+                                                    str.append(" = ").append(o.lispStr());
+                                                }
+                                                msg.editMessage(str.append("```")).queue();
+                                            },
+                                            2000);
+                                    return CommandResult.IGNORE;
+                                })
+                        )
+                )
+                .then(Nodes.literal("--keys", "-k")
+                        .documentation("Dumps all keys in your REPL")
+                        .executes(context -> {
+                            try {
+                                LispContext ctx = get(context.source().user());
+                                StringBuilder builder = new StringBuilder();
+                                ctx.keys().forEach(key -> {
+                                    builder.append(key).append(" => ");
+                                    LispObject obj = ctx.get(key);
+                                    builder.append(obj.lispStr());
+                                    while (obj.isLValue()) {
+                                        obj = obj.get();
+                                        builder.append(" = ").append(obj.lispStr());
+                                    }
+                                    builder.append("\n");
+                                });
+                                if (builder.length() > Constants.MESSAGE_SIZE - 7) {
+                                    context.source().channel().sendFile(builder.toString().getBytes(), "Keys.txt").queue();
+                                } else {
+                                    context.source().channel().sendMessage("```\n" + builder + "```").queue();
+                                }
+                                return CommandResult.SUCCESS;
+                            } catch (LispException e) {
+                                context.source().channel().sendMessage("Unable to list context keys").queue();
+                                return CommandResult.FAILURE;
+                            }
+                        })
+                )
         );
     }
 
