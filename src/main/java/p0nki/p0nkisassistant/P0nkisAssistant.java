@@ -35,6 +35,7 @@ public class P0nkisAssistant {
             jda.addEventListener(ReactionListener.INSTANCE);
             jda.addEventListener(AdminCommandListener.INSTANCE);
 //            jda.addEventListener(LoggerListener.INSTANCE);
+            jda.addEventListener(TrickListener.INSTANCE);
             jda.addEventListener(RolepollListener.INSTANCE);
             jda.addEventListener(StarboardListener.INSTANCE);
             jda.awaitReady();

@@ -82,7 +82,7 @@ public class RolepollListener extends ListenerAdapter {
         return System.currentTimeMillis() - start;
     }
 
-    public RolepollListener() {
+    private RolepollListener() {
 
     }
 

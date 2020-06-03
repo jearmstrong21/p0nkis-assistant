@@ -23,7 +23,7 @@ public class GeneralEventListener extends ListenerAdapter {
 
     public static GeneralEventListener INSTANCE = new GeneralEventListener();
 
-    public GeneralEventListener() {
+    private GeneralEventListener() {
         System.out.println(BotConfig.get().notifRolePing);
     }
 

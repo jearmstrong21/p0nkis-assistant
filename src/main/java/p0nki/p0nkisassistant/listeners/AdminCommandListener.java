@@ -19,7 +19,7 @@ public class AdminCommandListener extends ListenerAdapter {
 
     private final Set<String> logoutMessageIDs = new HashSet<>();
 
-    public AdminCommandListener() {
+    private AdminCommandListener() {
 
     }
 

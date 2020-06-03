@@ -21,7 +21,7 @@ public class StarboardListener extends ListenerAdapter {
 
     public static StarboardListener INSTANCE = new StarboardListener();
 
-    public StarboardListener() {
+    private StarboardListener() {
 
     }
 

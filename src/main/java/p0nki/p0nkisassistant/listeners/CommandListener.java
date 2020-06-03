@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 public class CommandListener extends ListenerAdapter {
 
 
-    public CommandListener() {
+    private CommandListener() {
 
     }
 
@@ -49,6 +49,7 @@ public class CommandListener extends ListenerAdapter {
         SmartAssCommands.register(dispatcher);
         SnowflakeCommand.register(dispatcher);
         LispCommands.register(dispatcher);
+        TrickCommands.register(dispatcher);
         streamCommandStarts();
         System.out.println(genericHelp());
     }

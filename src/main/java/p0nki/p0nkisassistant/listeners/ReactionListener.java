@@ -20,7 +20,7 @@ public class ReactionListener extends ListenerAdapter {
     public static ReactionListener INSTANCE = new ReactionListener();
     private final List<Listener> events;
 
-    public ReactionListener() {
+    private ReactionListener() {
         events = new ArrayList<>();
     }
 

@@ -17,7 +17,7 @@ public class FunListener extends ListenerAdapter {
 
     public static FunListener INSTANCE = new FunListener();
 
-    public FunListener() {
+    private FunListener() {
 
     }
 
