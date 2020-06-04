@@ -3,6 +3,7 @@ package p0nki.p0nkisassistant.commands;
 import p0nki.commandparser.argument.GreedyStringArgumentType;
 import p0nki.commandparser.command.CommandDispatcher;
 import p0nki.p0nkisassistant.P0nkisAssistant;
+import p0nki.p0nkisassistant.data.BotConfig;
 import p0nki.p0nkisassistant.listeners.CommandListener;
 import p0nki.p0nkisassistant.utils.CommandResult;
 import p0nki.p0nkisassistant.utils.CommandSource;
@@ -30,7 +31,7 @@ public class HelpCommands {
                         })
                 )
                 .executes(context -> {
-                    context.source().channel().sendMessage("My prefix here is `" + CommandListener.INSTANCE.getPrefix(context.source()) + "`.\nInvite link: <" + P0nkisAssistant.jda.getInviteUrl() + ">" +
+                    context.source().channel().sendMessage("My prefix here is `" + BotConfig.CACHE.prefix + "`.\nInvite link: <" + P0nkisAssistant.jda.getInviteUrl() + ">" +
                             "\nCategories:\n```\n"
                             + CommandListener.INSTANCE.genericHelp() + "```").queue();
                     return CommandResult.SUCCESS;

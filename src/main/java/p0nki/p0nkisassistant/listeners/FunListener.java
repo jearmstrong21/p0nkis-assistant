@@ -25,7 +25,7 @@ public class FunListener extends ListenerAdapter {
 
     public boolean isHMM(CommandSource source, String msg) {
         msg = msg.toUpperCase();
-        String command = CommandListener.INSTANCE.stripPrefix(source, msg);
+        String command = CommandListener.INSTANCE.stripPrefix(msg);
         if (command == null) return false;
         command = command.toUpperCase();
         if (command.length() < 3) return false;

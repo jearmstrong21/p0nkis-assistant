@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class TrickCommands {
 
     private static final int PER_PAGE = 10;
-    public static TricksConfig CACHE = Utils.deserialize("tricks", TricksConfig.class);
 
     public static boolean canBeUsed(CommandSource source, TricksConfig.Trick trick) {
         if (trick.owner.isGlobal) return true;
@@ -27,11 +26,11 @@ public class TrickCommands {
     }
 
     private static void serialize() {
-        Utils.serialize("tricks", CACHE, true);
+        Utils.serialize("tricks", TricksConfig.CACHE, true);
     }
 
     public static Optional<TricksConfig.Trick> getTrick(CommandSource source, String name) {
-        List<TricksConfig.Trick> possibilities = CACHE.tricks.stream().filter(trick -> canBeUsed(source, trick) && trick.name.equals(name)).collect(Collectors.toList());
+        List<TricksConfig.Trick> possibilities = TricksConfig.CACHE.tricks.stream().filter(trick -> canBeUsed(source, trick) && trick.name.equals(name)).collect(Collectors.toList());
         if (possibilities.size() == 0) return Optional.empty();
         if (possibilities.size() > 1) {
             System.out.println("wtf");
@@ -47,7 +46,7 @@ public class TrickCommands {
     }
 
     private static CommandResult paginateList(CommandSource source, int page) {
-        List<TricksConfig.Trick> tricks = CACHE.tricks.stream().filter(trick -> canBeUsed(source, trick)).collect(Collectors.toList());
+        List<TricksConfig.Trick> tricks = TricksConfig.CACHE.tricks.stream().filter(trick -> canBeUsed(source, trick)).collect(Collectors.toList());
         if (tricks.size() == 0) {
             source.channel().sendMessage("No tricks available").queue();
             return CommandResult.FAILURE;
@@ -112,7 +111,7 @@ public class TrickCommands {
                                                                         context.source().guild().getId(), false),
                                                                 new TricksConfig.Source(code, true),
                                                                 new Date(), new Date());
-                                                        CACHE.tricks.add(newTrick);
+                                                        TricksConfig.CACHE.tricks.add(newTrick);
                                                         serialize();
                                                         context.source().channel().sendMessage("Added trick")
                                                                 .embed(embed(newTrick).build())
@@ -140,7 +139,7 @@ public class TrickCommands {
                                                                 context.source().guild().getId(), false),
                                                         new TricksConfig.Source(code, false),
                                                         new Date(), new Date());
-                                                CACHE.tricks.add(newTrick);
+                                                TricksConfig.CACHE.tricks.add(newTrick);
                                                 serialize();
                                                 context.source().channel().sendMessage("Added trick")
                                                         .embed(embed(newTrick).build())
@@ -155,7 +154,7 @@ public class TrickCommands {
                         .requires(Requirements.IS_OWNER)
                         .documentation("Reloads trick cache")
                         .executes(context -> {
-                            CACHE = Utils.deserialize("tricks", TricksConfig.class);
+                            TricksConfig.CACHE = Utils.deserialize("tricks", TricksConfig.class);
                             context.source().channel().sendMessage("Reloaded cache").queue();
                             return CommandResult.SUCCESS;
                         })
@@ -245,7 +244,7 @@ public class TrickCommands {
                                             return CommandResult.FAILURE;
                                         } else {
                                             if (context.source().member().hasPermission(Permission.MESSAGE_MANAGE) || context.source().user().getId().equals(trick.get().owner.owner) || context.source().user().equals(P0nkisAssistant.P0NKI.get())) {
-                                                CACHE.tricks.remove(trick.get());
+                                                TricksConfig.CACHE.tricks.remove(trick.get());
                                                 serialize();
                                                 context.source().channel().sendMessage("Trick removed").queue();
                                                 return CommandResult.SUCCESS;

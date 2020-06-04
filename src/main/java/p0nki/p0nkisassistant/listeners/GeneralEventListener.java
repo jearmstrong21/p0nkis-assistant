@@ -24,7 +24,7 @@ public class GeneralEventListener extends ListenerAdapter {
     public static GeneralEventListener INSTANCE = new GeneralEventListener();
 
     private GeneralEventListener() {
-        System.out.println(BotConfig.get().notifRolePing);
+
     }
 
     @Override
@@ -52,7 +52,7 @@ public class GeneralEventListener extends ListenerAdapter {
                     .source(source)
                     .success()
                     .title("Who pinged? \uD83D\uDC40")
-                    .description("My prefix here is " + CommandListener.INSTANCE.getPrefix(source))
+                    .description("My prefix here is " + BotConfig.CACHE.prefix)
                     .build()).queue();
         }
     }

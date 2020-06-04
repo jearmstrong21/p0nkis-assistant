@@ -1,10 +1,14 @@
 package p0nki.p0nkisassistant.data;
 
+import p0nki.p0nkisassistant.utils.Utils;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TricksConfig {
+
+    public static TricksConfig CACHE = Utils.deserialize("tricks", TricksConfig.class);
 
     public List<Trick> tricks = new ArrayList<>();
 

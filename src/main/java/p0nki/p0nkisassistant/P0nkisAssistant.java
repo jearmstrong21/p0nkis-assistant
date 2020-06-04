@@ -16,8 +16,8 @@ public class P0nkisAssistant {
 
     public static JDA jda;
 
-    public static Lazy<User> P0NKI = Lazy.fromSupplier(() -> jda.getUserById(BotConfig.get().ownerID));
-    public static Lazy<Emote> EMOTE_PINGSOCK = Lazy.fromSupplier(() -> jda.getEmoteById(BotConfig.get().pingsockEmoteID));
+    public static Lazy<User> P0NKI = Lazy.fromSupplier(() -> jda.getUserById(BotConfig.CACHE.ownerID));
+    public static Lazy<Emote> EMOTE_PINGSOCK = Lazy.fromSupplier(() -> jda.getEmoteById(BotConfig.CACHE.pingsockEmoteID));
 
     public static void main(String[] args) {
         try {

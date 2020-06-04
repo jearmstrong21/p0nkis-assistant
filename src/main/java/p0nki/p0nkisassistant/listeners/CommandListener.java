@@ -71,24 +71,22 @@ public class CommandListener extends ListenerAdapter {
         return dispatcher.getCategories().stream().map(optional -> optional.orElse("[no category")).collect(Collectors.toSet());
     }
 
-    public String getPrefix(CommandSource source) {
-        BotConfig botConfig = BotConfig.get();
-        if (source.isGuild()) {
-            if (botConfig.guildPrefixes.containsKey(source.guild().getId())) {
-                return botConfig.guildPrefixes.get(source.guild().getId());
-            }
-        }
-        return botConfig.basePrefix;
-    }
+//    public String getPrefix(CommandSource source) {
+//        BotConfig botConfig = BotConfig.get();
+//        if (source.isGuild()) {
+//            if (botConfig.guildPrefixes.containsKey(source.guild().getId())) {
+//                return botConfig.guildPrefixes.get(source.guild().getId());
+//            }
+//        }
+//        return botConfig.basePrefix;
+//    }
 
-    public String stripPrefix(CommandSource source, String msg) {
-        BotConfig botConfig = BotConfig.get();
+    public String stripPrefix(String msg) {
         List<String> possiblePrefixes = new ArrayList<>(List.of(
                 "<@" + P0nkisAssistant.jda.getSelfUser().getId() + ">",
                 "<@!" + P0nkisAssistant.jda.getSelfUser().getId() + ">",
-                getPrefix(source)
+                BotConfig.CACHE.prefix
         ));
-        possiblePrefixes.add(botConfig.basePrefix);
         for (String str : possiblePrefixes) {
             if (msg.startsWith(str)) {
                 return msg.substring(str.length());
@@ -113,7 +111,6 @@ public class CommandListener extends ListenerAdapter {
         if (streamCommandStarts().noneMatch(command::startsWith))
             return CommandResult.IGNORE;
         try {
-//            source.message().addReaction(Constants.UNICODE_WAITING).queue();
             CommandResult result = dispatcher.run(source, command);
             if (result == CommandResult.SUCCESS)
                 source.message().addReaction(Constants.UNICODE_SUCCESS).queue();
@@ -161,7 +158,7 @@ public class CommandListener extends ListenerAdapter {
         if (FunListener.INSTANCE.isHMM(CommandSource.of(event), event.getMessage().getContentRaw())) return;
         String msg = event.getMessage().getContentRaw();
         CommandSource source = CommandSource.of(event);
-        String command = stripPrefix(source, msg);
+        String command = stripPrefix(msg);
         if (command != null) {
             runCommand(source, command);
         }

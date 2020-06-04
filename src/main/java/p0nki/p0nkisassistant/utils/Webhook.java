@@ -61,7 +61,7 @@ public class Webhook {
     }
 
     public void ping(String ctx) {
-        accept(ctx, new WebhookMessageBuilder().setContent(BotConfig.get().notifRolePing));
+        accept(ctx, new WebhookMessageBuilder().setContent(BotConfig.CACHE.notifRolePing));
     }
 
     private static class WebhookInstanceJSON {
