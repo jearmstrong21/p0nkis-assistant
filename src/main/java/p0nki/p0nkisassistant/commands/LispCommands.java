@@ -86,13 +86,6 @@ public class LispCommands {
                             context.source().channel().sendMessage("Under construction").queue();
                             return CommandResult.SUCCESS;
                             // TODO fully doc language, link to public google doc in --about command?
-                            // TODO make it so that the owner (me) can always update or remove tricks
-                            // TODO convert `smartass` commands to !!xy and !!lmgtfy
-                            // TODO args parsing
-                            //  dynamic brigadier?
-                            //  no, just roll a custom miniparser
-                            //  how would this work?
-                            //  how does it work in K9 - just a single string literal? or a LispListLiteral of greedyString.split(" ")?
                             // TODO number() cast just like str() cast in builtin
                             // TODO Math library in 2.1 espressolisp release along with whitespace fix + whitespace escapes in strings?
                         })

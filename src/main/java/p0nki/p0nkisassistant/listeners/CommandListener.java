@@ -46,7 +46,6 @@ public class CommandListener extends ListenerAdapter {
         RolepollCommand.register(dispatcher);
         SourceInfoCommand.register(dispatcher);
         PingCommand.register(dispatcher);
-        SmartAssCommands.register(dispatcher);
         SnowflakeCommand.register(dispatcher);
         LispCommands.register(dispatcher);
         TrickCommands.register(dispatcher);
