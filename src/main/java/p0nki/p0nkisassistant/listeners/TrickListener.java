@@ -15,6 +15,7 @@ import p0nki.p0nkisassistant.commands.TrickCommands;
 import p0nki.p0nkisassistant.data.BotConfig;
 import p0nki.p0nkisassistant.data.TricksConfig;
 import p0nki.p0nkisassistant.utils.CommandSource;
+import p0nki.p0nkisassistant.utils.Utils;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -30,15 +31,6 @@ public class TrickListener extends ListenerAdapter {
 
     }
 
-    private static String censorPings(GuildMessageReceivedEvent event, String message) {
-        return message.contains("@everyone") ||
-                message.contains("@here") ||
-                event.getGuild().getRoles().stream().anyMatch(role -> message.contains(role.getAsMention())) ||
-                event.getGuild().getMembers().stream().anyMatch(member -> message.contains("<@" + member.getId() + ">") || message.contains("<@!" + member.getId() + ">"))
-                ? "Error nice try but you can't do pings in this bot" : message;
-//        return message;
-    }
-
     private static LispLiteral parse(String str) {
         try {
             return new LispNumberLiteral(Double.parseDouble(str));
@@ -50,7 +42,7 @@ public class TrickListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
         String prefix = BotConfig.CACHE.prefix + "!";
-        String content = event.getMessage().getContentDisplay();
+        String content = event.getMessage().getContentRaw();
         if (content.startsWith(prefix)) {
             String afterPrefix = content.substring(prefix.length());
             String name = afterPrefix;
@@ -75,7 +67,7 @@ public class TrickListener extends ListenerAdapter {
                                     // on ast
                                 },
                                 () -> event.getChannel().sendMessage("Timeout while evaluating trick").queue(),
-                                e -> event.getChannel().sendMessage(censorPings(event, "Exception " + e.getMessage() + " at token " + e.getToken() + " while evaluating trick")).queue(),
+                                e -> event.getChannel().sendMessage(Utils.censorPings(event, "Exception " + e.getMessage() + " at token " + e.getToken() + " while evaluating trick")).queue(),
                                 obj -> {
                                     try {
                                         obj = obj.fullyDereference();
@@ -88,29 +80,29 @@ public class TrickListener extends ListenerAdapter {
                                                 args = Arrays.stream(finalArgStr.split(" ")).map(TrickListener::parse).collect(Collectors.toList());
                                             }
                                             if (func.getArgNames().size() != args.size()) {
-                                                event.getChannel().sendMessage(censorPings(event, "Expected " + func.getArgNames().size() + " arguments, received " + args.size() + " arguments")).queue();
+                                                event.getChannel().sendMessage(Utils.censorPings(event, "Expected " + func.getArgNames().size() + " arguments, received " + args.size() + " arguments")).queue();
                                             } else {
                                                 for (int i = 0; i < func.getArgNames().size(); i++) {
                                                     ctx.set(func.getArgNames().get(i), new LispReference(func.getArgNames().get(i), false, new LispStandardReferenceImpl(args.get(i))));
                                                 }
-                                                event.getChannel().sendMessage(censorPings(event, func.getTreeRoot().evaluate(ctx).fullyDereference().lispStr())).queue();
+                                                event.getChannel().sendMessage(Utils.censorPings(event, func.getTreeRoot().evaluate(ctx).fullyDereference().lispStr())).queue();
                                             }
                                         } else {
                                             if (finalArgStr.length() > 0) {
                                                 event.getChannel().sendMessage("Expected no arguments").queue();
                                             } else {
-                                                event.getChannel().sendMessage(censorPings(event, obj.lispStr())).queue();
+                                                event.getChannel().sendMessage(Utils.censorPings(event, obj.lispStr())).queue();
                                             }
                                         }
                                     } catch (LispException e) {
-                                        event.getChannel().sendMessage(censorPings(event, "Exception " + e.getMessage() + " at token " + e.getToken() + " while evaluating trick")).queue();
+                                        event.getChannel().sendMessage(Utils.censorPings(event, "Exception " + e.getMessage() + " at token " + e.getToken() + " while evaluating trick")).queue();
                                     }
                                 }, 2000);
                     } catch (LispException e) {
-                        event.getChannel().sendMessage(censorPings(event, "Exception " + e.getMessage() + " at token " + e.getToken() + " while initializing context")).queue();
+                        event.getChannel().sendMessage(Utils.censorPings(event, "Exception " + e.getMessage() + " at token " + e.getToken() + " while initializing context")).queue();
                     }
                 } else {
-                    event.getChannel().sendMessage(censorPings(event, trick.source.code)).queue();
+                    event.getChannel().sendMessage(Utils.censorPings(event, trick.source.code)).queue();
                 }
             }
         }

@@ -4,6 +4,9 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -13,10 +16,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class Utils {
+
+    public static String censorPings(CommandSource source, String message) {
+        return censorPings(source.isGuild() ? source.guild().getRoles() : List.of(), source.isGuild() ? source.guild().getMembers() : List.of(), message);
+    }
+
+    public static String censorPings(List<Role> roles, List<Member> members, String message) {
+        message = message.replaceAll("@everyone", "@\u0435veryone");
+        message = message.replaceAll("@here", "@h\u0435re");
+        for (Role role : roles) {
+            message = message.replaceAll(role.getAsMention(), "@" + role.getName());
+        }
+        for (Member member : members) {
+            message = message.replaceAll("<@" + member.getId() + ">", "@" + member.getEffectiveName());
+            message = message.replaceAll("<@!" + member.getId() + ">", "@" + member.getEffectiveName());
+        }
+        return message;
+    }
+
+    public static String censorPings(GuildMessageReceivedEvent event, String message) {
+        return censorPings(event.getGuild().getRoles(), event.getGuild().getMembers(), message);
+    }
 
     public static long snowflakeToUnixTime(long id) {
         return ((id >> 22) + 1420070400000L);

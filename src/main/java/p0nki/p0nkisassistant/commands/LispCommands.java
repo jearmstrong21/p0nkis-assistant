@@ -18,10 +18,7 @@ import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.LispLogger;
-import p0nki.p0nkisassistant.utils.CommandResult;
-import p0nki.p0nkisassistant.utils.CommandSource;
-import p0nki.p0nkisassistant.utils.Constants;
-import p0nki.p0nkisassistant.utils.Nodes;
+import p0nki.p0nkisassistant.utils.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -123,7 +120,7 @@ public class LispCommands {
                                     if (result.length() > Constants.MESSAGE_SIZE - 7) {
                                         context.source().channel().sendFile(result.getBytes(), "Tokens.txt").queue();
                                     } else {
-                                        context.source().channel().sendMessage("```\n" + result + "```").queue();
+                                        context.source().channel().sendMessage(Utils.censorPings(context.source(), "```\n" + result + "```")).queue();
                                     }
                                     return CommandResult.SUCCESS;
                                 })
@@ -140,20 +137,20 @@ public class LispCommands {
                                         LispTreeNode node = LispASTCreator.parse(tokens);
                                         result.append(node.toDebugJSON().toString(2));
                                         if (tokens.size() > 0) {
-                                            context.source().channel().sendMessage("Extra tokens:\n```\n" + tokens.get(0).toString() + "```").queue();
+                                            context.source().channel().sendMessage(Utils.censorPings(context.source(), "Extra tokens:\n```\n" + tokens.get(0).toString() + "```")).queue();
                                             return CommandResult.FAILURE;
                                         }
                                         if (result.length() > Constants.MESSAGE_SIZE - 7) {
                                             context.source().channel().sendFile(result.toString().getBytes(), "Tree.txt").queue();
                                         } else {
-                                            context.source().channel().sendMessage("```\n" + result + "```").queue();
+                                            context.source().channel().sendMessage(Utils.censorPings(context.source(), "```\n" + result + "```")).queue();
                                         }
                                         return CommandResult.SUCCESS;
                                     } catch (LispException e) {
                                         if (e.getToken() != null) {
-                                            context.source().channel().sendMessage("Token error\n```\n" + code + "\n" + e.getMessage() + "\n\n" + e.getToken().toString() + "```").queue();
+                                            context.source().channel().sendMessage(Utils.censorPings(context.source(), "Token error\n```\n" + code + "\n" + e.getMessage() + "\n\n" + e.getToken().toString() + "```")).queue();
                                         } else {
-                                            context.source().channel().sendMessage("Runtime error\n```\n" + e.getMessage() + "```").queue();
+                                            context.source().channel().sendMessage(Utils.censorPings(context.source(), "Runtime error\n```\n" + e.getMessage() + "```")).queue();
                                         }
                                         return CommandResult.FAILURE;
                                     }
@@ -169,7 +166,7 @@ public class LispCommands {
                                     try {
                                         ctx = get(context.source().user());
                                     } catch (LispException e) {
-                                        context.source().channel().sendMessage("Failed to obtain context. Message: " + e.getMessage()).queue();
+                                        context.source().channel().sendMessage(Utils.censorPings(context.source(), "Failed to obtain context. Message: " + e.getMessage())).queue();
                                         return CommandResult.FAILURE;
                                     }
                                     Message msg = context.source().channel().sendMessage("Evaluating ...").complete();
@@ -181,9 +178,9 @@ public class LispCommands {
                                             () -> msg.editMessage(str.append("\nTimed out")).queue(),
                                             (e) -> {
                                                 if (e.getToken() == null) {
-                                                    msg.editMessage(str.append("\nRuntime exception\n```\n").append(e.getMessage()).append("```")).queue();
+                                                    msg.editMessage(Utils.censorPings(context.source(), str.append("\nRuntime exception\n```\n").append(e.getMessage()).append("```").toString())).queue();
                                                 } else {
-                                                    msg.editMessage(str.append("\nParse exception\n```\n").append(e.getMessage()).append("```")).queue();
+                                                    msg.editMessage(Utils.censorPings(context.source(), str.append("\nParse exception\n```\n").append(e.getMessage()).append("```").toString())).queue();
                                                 }
                                             },
                                             (o) -> {
@@ -192,7 +189,7 @@ public class LispCommands {
                                                     o = o.get();
                                                     str.append(" = ").append(o.lispStr());
                                                 }
-                                                msg.editMessage(str.append("```")).queue();
+                                                msg.editMessage(Utils.censorPings(context.source(), str.append("```").toString())).queue();
                                             },
                                             2000);
                                     return CommandResult.IGNORE;
@@ -218,7 +215,7 @@ public class LispCommands {
                                 if (builder.length() > Constants.MESSAGE_SIZE - 7) {
                                     context.source().channel().sendFile(builder.toString().getBytes(), "Keys.txt").queue();
                                 } else {
-                                    context.source().channel().sendMessage("```\n" + builder + "```").queue();
+                                    context.source().channel().sendMessage(Utils.censorPings(context.source(), "```\n" + builder + "```")).queue();
                                 }
                                 return CommandResult.SUCCESS;
                             } catch (LispException e) {
