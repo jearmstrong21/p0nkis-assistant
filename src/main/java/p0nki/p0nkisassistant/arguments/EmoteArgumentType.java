@@ -19,12 +19,13 @@ public class EmoteArgumentType extends GenericArgumentType<Emote> {
     @Override
     protected Emote parseById(CommandSource source, String str) {
         Emote attempt1 = P0nkisAssistant.jda.getEmoteById(str);
-        if (attempt1 == null) {
-            for (Emote attempt2 : source.message().getEmotes()) {
-                if (attempt2.getId().equals(str)) return attempt2;
-            }
+        if (attempt1 != null) {
+            return attempt1;
         }
-        return attempt1;
+        for (Emote attempt2 : source.message().getEmotes()) {
+            if (attempt2.getId().equals(str)) return attempt2;
+        }
+        return null;
     }
 
     @Override
