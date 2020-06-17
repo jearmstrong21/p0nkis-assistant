@@ -2,8 +2,8 @@ package p0nki.easycommandtestbot;
 
 import p0nki.easycommandtestbot.cogs.*;
 import p0nki.easycommandtestbot.data.BotConfig;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
 import p0nki.easycommandtestbot.lib.EasyListener;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;

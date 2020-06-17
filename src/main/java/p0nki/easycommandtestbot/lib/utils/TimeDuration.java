@@ -1,4 +1,4 @@
-package p0nki.easycommandtestbot.lib;
+package p0nki.easycommandtestbot.lib.utils;
 
 import p0nki.easycommand.utils.Optional;
 

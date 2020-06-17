@@ -5,12 +5,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.easycommand.annotations.*;
 import p0nki.easycommand.arguments.Parsers;
 import p0nki.easycommandtestbot.data.CounterData;
-import p0nki.easycommandtestbot.lib.DiscordSource;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
-import p0nki.easycommandtestbot.lib.Holder;
 import p0nki.easycommandtestbot.lib.requirements.RequireGuild;
 import p0nki.easycommandtestbot.lib.requirements.RequireManageServer;
 import p0nki.easycommandtestbot.lib.requirements.RequireMessageManage;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.Holder;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

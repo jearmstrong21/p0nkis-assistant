@@ -9,6 +9,10 @@ import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.easycommand.CommandDispatcher;
 import p0nki.easycommand.utils.Optional;
+import p0nki.easycommandtestbot.lib.utils.CogInitializer;
+import p0nki.easycommandtestbot.lib.utils.DiscordParsers;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
@@ -21,12 +25,24 @@ public class EasyListener extends ListenerAdapter {
     public static EasyListener INSTANCE = new EasyListener();
 
     private final CommandDispatcher dispatcher;
+    private final List<CogInitializer> cogInitializers = new ArrayList<>();
     private String prefix;
     private JDA jda;
     private String owner;
     private String token;
     private Activity activity;
-    private final List<CogInitializer> cogInitializers = new ArrayList<>();
+
+    private EasyListener() {
+        dispatcher = new CommandDispatcher();
+        dispatcher.addPrimitives();
+        dispatcher.addParser(DiscordParsers.TEXT_CHANNEL);
+        dispatcher.addParser(DiscordParsers.EMOTE);
+        dispatcher.addParser(DiscordParsers.MEMBER);
+        dispatcher.addParser(DiscordParsers.USER);
+        dispatcher.addParser(DiscordParsers.ROLE);
+        dispatcher.addParser(DiscordParsers.SNOWFLAKE);
+        dispatcher.addParser(DiscordParsers.DURATION);
+    }
 
     public EasyListener createJda() throws LoginException, InterruptedException {
         jda = new JDABuilder()
@@ -57,27 +73,15 @@ public class EasyListener extends ListenerAdapter {
         return this;
     }
 
-    public EasyListener setOwner(String owner) {
-        this.owner = owner;
-        return this;
-    }
-
     public User getOwner() {
         return jda.getUserById(owner);
     }
 
     // TODO: EasyListenerBuilder
 
-    private EasyListener() {
-        dispatcher = new CommandDispatcher();
-        dispatcher.addPrimitives();
-        dispatcher.addParser(DiscordParsers.TEXT_CHANNEL);
-        dispatcher.addParser(DiscordParsers.EMOTE);
-        dispatcher.addParser(DiscordParsers.MEMBER);
-        dispatcher.addParser(DiscordParsers.USER);
-        dispatcher.addParser(DiscordParsers.ROLE);
-        dispatcher.addParser(DiscordParsers.SNOWFLAKE);
-        dispatcher.addParser(DiscordParsers.DURATION);
+    public EasyListener setOwner(String owner) {
+        this.owner = owner;
+        return this;
     }
 
     public EasyListener setPrefix(String prefix) {

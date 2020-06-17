@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.Permission;
 import p0nki.easycommand.requirements.TypedRequirement;
 import p0nki.easycommand.utils.Optional;
 import p0nki.easycommandtestbot.data.BotConfig;
-import p0nki.easycommandtestbot.lib.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
 
 public class RequireManageServer extends TypedRequirement<DiscordSource> {
 

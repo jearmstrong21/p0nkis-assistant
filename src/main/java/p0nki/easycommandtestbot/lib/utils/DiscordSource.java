@@ -1,8 +1,9 @@
-package p0nki.easycommandtestbot.lib;
+package p0nki.easycommandtestbot.lib.utils;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
 import p0nki.easycommand.utils.Optional;
+import p0nki.easycommandtestbot.lib.EasyListener;
 
 public class DiscordSource {
 

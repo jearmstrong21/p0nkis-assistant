@@ -14,6 +14,10 @@ public class EasyJackson {
     public static final ObjectMapper OBJECT_MAPPER = getMapper();
     public static final ObjectWriter OBJECT_WRITER = getWriter();
 
+    private EasyJackson() {
+
+    }
+
     private static ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -30,10 +34,6 @@ public class EasyJackson {
 
     private static ObjectWriter getWriter() {
         return OBJECT_MAPPER.writerWithDefaultPrettyPrinter();
-    }
-
-    private EasyJackson() {
-
     }
 
 }

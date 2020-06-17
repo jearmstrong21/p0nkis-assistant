@@ -8,10 +8,10 @@ import p0nki.easycommand.annotations.Command;
 import p0nki.easycommand.annotations.CommandCog;
 import p0nki.easycommand.annotations.Source;
 import p0nki.easycommand.arguments.Parsers;
-import p0nki.easycommandtestbot.lib.DiscordSource;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
-import p0nki.easycommandtestbot.lib.Holder;
 import p0nki.easycommandtestbot.lib.page.Paginator;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.Holder;
 
 import java.util.stream.Collectors;
 
@@ -40,20 +40,18 @@ public class UtilsCog extends ListenerAdapter implements Holder {
                 RealCommandCog cog = dispatcher().getCogs().get(pageNumber - 1);
                 EmbedBuilder builder = new EmbedBuilder().setTitle("Cog " + pageNumber + "/" + dispatcher().getCogs().size()).setDescription("`" + cog.getName() + "` cog\n\n");
                 // TODO add requirements
-                cog.getCommands().forEach(realCommand -> {
-                    builder.getDescriptionBuilder()
-                            .append(realCommand.getLiterals().stream().map(UtilsCog::longest).collect(Collectors.joining(" ")))
-                            .append(" ")
-                            .append(longest(realCommand.getNames().toArray(new String[0])))
-                            .append(" ")
-                            .append(realCommand.getArguments().stream().map(argument -> {
-                                String str = argument.getName();
-                                if (argument.getModifiers().size() > 0) str += ":";
-                                str += String.join(",", argument.getModifiers());
-                                return "[" + str + "]";
-                            }).collect(Collectors.joining(" ")))
-                            .append("\n");
-                });
+                cog.getCommands().forEach(realCommand -> builder.getDescriptionBuilder()
+                        .append(realCommand.getLiterals().stream().map(UtilsCog::longest).collect(Collectors.joining(" ")))
+                        .append(" ")
+                        .append(longest(realCommand.getNames().toArray(new String[0])))
+                        .append(" ")
+                        .append(realCommand.getArguments().stream().map(argument -> {
+                            String str = argument.getName();
+                            if (argument.getModifiers().size() > 0) str += ":";
+                            str += String.join(",", argument.getModifiers());
+                            return "[" + str + "]";
+                        }).collect(Collectors.joining(" ")))
+                        .append("\n"));
                 return builder;
             }
         }, dispatcher().getCogs().size() + 1, page).start(source);
@@ -82,9 +80,7 @@ public class UtilsCog extends ListenerAdapter implements Holder {
         long start = System.currentTimeMillis();
         source.channel().sendMessage("Ping...").queue(message -> {
             long end = System.currentTimeMillis();
-            jda().getRestPing().queue(restPing -> {
-                message.editMessage(String.format("Pong!\nGateway ping: %s\nRest ping: %s\nMessage send time: %s", jda().getGatewayPing(), restPing, end - start)).queue();
-            });
+            jda().getRestPing().queue(restPing -> message.editMessage(String.format("Pong!\nGateway ping: %s\nRest ping: %s\nMessage send time: %s", jda().getGatewayPing(), restPing, end - start)).queue());
         });
     }
 

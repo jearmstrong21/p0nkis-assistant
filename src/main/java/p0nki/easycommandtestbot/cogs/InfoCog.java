@@ -6,10 +6,10 @@ import p0nki.easycommand.annotations.Argument;
 import p0nki.easycommand.annotations.Command;
 import p0nki.easycommand.annotations.CommandCog;
 import p0nki.easycommand.annotations.Source;
-import p0nki.easycommandtestbot.lib.DiscordSource;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
-import p0nki.easycommandtestbot.lib.Holder;
 import p0nki.easycommandtestbot.lib.requirements.RequireGuild;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.Holder;
 
 import java.util.Date;
 import java.util.stream.Collectors;

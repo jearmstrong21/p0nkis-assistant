@@ -6,14 +6,16 @@ import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import p0nki.easycommandtestbot.lib.DiscordSource;
 import p0nki.easycommandtestbot.lib.task.DelayedTaskManager;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class Paginator extends ListenerAdapter {
 
+    private static final long LIFETIME = 60000;
+    private static final boolean JUMP_TO = false;
     private final PageSupplier pageSupplier;
     private final int totalPageCount;
     private int currentPageIndex;
@@ -21,20 +23,17 @@ public class Paginator extends ListenerAdapter {
     private User paginator = null;
     private long lastInteractionTime;
 
-    private static final long LIFETIME = 60000;
-    private static final boolean JUMP_TO = false;
+    public Paginator(PageSupplier pageSupplier, int totalPageCount, int currentPageIndex) {
+        this.pageSupplier = pageSupplier;
+        this.totalPageCount = totalPageCount;
+        this.currentPageIndex = currentPageIndex;
+    }
 
     private void checkInteractionTime() {
         lastInteractionTime = System.currentTimeMillis();
         new DelayedTaskManager(() -> {
             if (message != null && System.currentTimeMillis() - lastInteractionTime > LIFETIME) stop();
         }).schedule(LIFETIME);
-    }
-
-    public Paginator(PageSupplier pageSupplier, int totalPageCount, int currentPageIndex) {
-        this.pageSupplier = pageSupplier;
-        this.totalPageCount = totalPageCount;
-        this.currentPageIndex = currentPageIndex;
     }
 
     public void assertRunning() {

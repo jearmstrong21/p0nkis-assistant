@@ -1,8 +1,8 @@
 package p0nki.easycommandtestbot.lib.data;
 
 import net.dv8tion.jda.api.entities.Guild;
-import p0nki.easycommandtestbot.lib.DiscordSource;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class PerGuildDataCache<T extends ReadWriteData> {
         this.name = name;
         this.supplier = supplier;
         File file = new File(DiscordUtils.data("guilds"));
-        if (!file.exists()) file.mkdirs();
+        if (!file.exists()) DiscordUtils.verify(file.mkdirs());
         String[] files = file.list();
         for (String s : files) {
             File f = new File(DiscordUtils.data(String.format("guilds/%s/%s.json", s, name)));

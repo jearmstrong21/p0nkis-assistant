@@ -1,8 +1,8 @@
-package p0nki.easycommandtestbot.lib;
+package p0nki.easycommandtestbot.lib.utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import p0nki.easycommandtestbot.lib.EasyListener;
 import p0nki.easycommandtestbot.lib.page.Paginator;
 
 import javax.annotation.CheckReturnValue;
@@ -14,12 +14,17 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.Objects;
 import java.util.function.IntFunction;
 
 public class DiscordUtils {
 
     private DiscordUtils() {
 
+    }
+
+    public static void verify(boolean b) {
+        if (!b) throw new AssertionError("oopsie");
     }
 
     /**
@@ -36,7 +41,7 @@ public class DiscordUtils {
 
     public static String resource(String path) {
         System.out.println("RESOURCE " + ClassLoader.getSystemClassLoader().getResource(path));
-        return ClassLoader.getSystemClassLoader().getResource(path).getFile();
+        return Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(path)).getFile();
     }
 
     public static String data(String path) {

@@ -1,7 +1,7 @@
 package p0nki.easycommandtestbot.lib.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
 
 import java.io.File;
 import java.io.IOException;

@@ -4,9 +4,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.easycommand.annotations.Command;
 import p0nki.easycommand.annotations.CommandCog;
 import p0nki.easycommand.annotations.Source;
-import p0nki.easycommandtestbot.lib.DiscordSource;
-import p0nki.easycommandtestbot.lib.Holder;
 import p0nki.easycommandtestbot.lib.requirements.RequireOwner;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
+import p0nki.easycommandtestbot.lib.utils.Holder;
 
 @CommandCog(name = "debug", requirements = RequireOwner.class)
 public class DebugCog extends ListenerAdapter implements Holder {

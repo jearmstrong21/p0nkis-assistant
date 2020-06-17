@@ -1,4 +1,4 @@
-package p0nki.easycommandtestbot.lib;
+package p0nki.easycommandtestbot.lib.utils;
 
 import net.dv8tion.jda.api.entities.ISnowflake;
 

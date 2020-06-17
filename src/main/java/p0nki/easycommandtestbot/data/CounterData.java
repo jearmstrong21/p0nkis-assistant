@@ -23,6 +23,11 @@ public class CounterData extends ReadWriteData {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        write();
+    }
+
     public Set<String> keys() {
         return Collections.unmodifiableSet(data.keySet());
     }
@@ -33,11 +38,6 @@ public class CounterData extends ReadWriteData {
 
     public void remove(String name) {
         data.remove(name);
-        write();
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
         write();
     }
 

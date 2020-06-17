@@ -1,7 +1,7 @@
 package p0nki.easycommandtestbot.lib.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,16 +27,16 @@ public abstract class ReadWriteData {
         this.name = name;
     }
 
-    void setDir(String dir) {
-        this.dir = dir;
-    }
-
     String dir() {
         return dir;
     }
 
     protected final File getDir() {
         return new File(DiscordUtils.data(dir));
+    }
+
+    void setDir(String dir) {
+        this.dir = dir;
     }
 
     protected final File getFile() {
@@ -56,7 +56,7 @@ public abstract class ReadWriteData {
         new Thread(() -> {
             try {
                 File file = getFile();
-                if (!file.exists()) file.getParentFile().mkdirs();
+                if (!file.exists()) DiscordUtils.verify(file.getParentFile().mkdirs());
                 EasyJackson.OBJECT_WRITER.writeValue(getFile(), this);
             } catch (IOException e) {
                 throw new RuntimeException(e);

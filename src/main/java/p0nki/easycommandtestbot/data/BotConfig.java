@@ -6,13 +6,12 @@ import p0nki.easycommandtestbot.lib.data.ReadData;
 
 public class BotConfig extends ReadData {
 
+    public static BotConfig VALUE = new BotConfig();
     @JsonProperty("token_file")
     private String tokenFile;
     private String prefix;
     private String owner;
     private Activity activity;
-
-    public static BotConfig VALUE = new BotConfig();
 
     protected BotConfig() {
         super("botconfig");

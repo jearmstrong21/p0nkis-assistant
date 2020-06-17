@@ -3,8 +3,8 @@ package p0nki.easycommandtestbot.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import p0nki.easycommandtestbot.lib.DiscordUtils;
-import p0nki.easycommandtestbot.lib.Holder;
+import p0nki.easycommandtestbot.lib.utils.DiscordUtils;
+import p0nki.easycommandtestbot.lib.utils.Holder;
 
 import java.util.Date;
 import java.util.Objects;
@@ -30,11 +30,9 @@ public class Reminder implements Holder {
         this.text = text;
         this.createdAt = createdAt;
         this.sendAt = sendAt;
-        Objects.requireNonNull(jda().getUserById(user)).openPrivateChannel().queue(privateChannel -> {
-            privateChannel.sendMessage("Reminder created in guild " +
-                    Objects.requireNonNull(jda().getTextChannelById(channelID)).getGuild().getName())
-                    .embed(embed().build()).queue();
-        });
+        Objects.requireNonNull(jda().getUserById(user)).openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage("Reminder created in guild " +
+                Objects.requireNonNull(jda().getTextChannelById(channelID)).getGuild().getName())
+                .embed(embed().build()).queue());
     }
 
     public long getSendAt() {

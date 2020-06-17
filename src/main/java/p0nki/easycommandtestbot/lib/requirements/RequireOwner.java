@@ -2,8 +2,8 @@ package p0nki.easycommandtestbot.lib.requirements;
 
 import p0nki.easycommand.requirements.TypedRequirement;
 import p0nki.easycommand.utils.Optional;
-import p0nki.easycommandtestbot.lib.DiscordSource;
 import p0nki.easycommandtestbot.lib.EasyListener;
+import p0nki.easycommandtestbot.lib.utils.DiscordSource;
 
 public class RequireOwner extends TypedRequirement<DiscordSource> {
 

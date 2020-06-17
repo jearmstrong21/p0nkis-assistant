@@ -1,6 +1,6 @@
 package p0nki.easycommandtestbot.lib.task;
 
-import p0nki.easycommandtestbot.lib.Holder;
+import p0nki.easycommandtestbot.lib.utils.Holder;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -8,9 +8,9 @@ import java.util.TimerTask;
 public class RepeatedTaskManager implements Holder {
 
     private final RepeatedTask repeatedTask;
+    private final long period;
     private TimerTask task = null;
     private int iterations;
-    private final long period;
     private boolean isRunning;
 
     public RepeatedTaskManager(RepeatedTask repeatedTask, long period) {
