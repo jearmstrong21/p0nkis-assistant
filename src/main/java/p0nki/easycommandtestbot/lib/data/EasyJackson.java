@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import net.dv8tion.jda.api.entities.Activity;
 import p0nki.easycommandtestbot.lib.data.serializers.ActivityDeserializer;
 import p0nki.easycommandtestbot.lib.data.serializers.ActivitySerializer;
+import p0nki.easycommandtestbot.lib.data.serializers.ColorDeserializer;
+import p0nki.easycommandtestbot.lib.data.serializers.ColorSerializer;
+
+import java.awt.*;
 
 public class EasyJackson {
 
@@ -27,6 +31,10 @@ public class EasyJackson {
         SimpleModule module = new SimpleModule();
         module.addSerializer(Activity.class, ActivitySerializer.INSTANCE);
         module.addDeserializer(Activity.class, ActivityDeserializer.INSTANCE);
+
+        module.addSerializer(Color.class, ColorSerializer.INSTANCE);
+        module.addDeserializer(Color.class, ColorDeserializer.INSTANCE);
+
         mapper.registerModules(module);
 
         return mapper;
