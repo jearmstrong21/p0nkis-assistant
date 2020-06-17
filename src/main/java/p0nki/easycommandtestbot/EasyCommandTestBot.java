@@ -28,7 +28,8 @@ public class EasyCommandTestBot {
                         DebugCog.class,
                         CounterCog.class,
                         ReminderCog.class,
-                        StarboardCog.class
+                        StarboardCog.class,
+                        RolepollCog.class
                 )
                 .initializeCogs();
     }

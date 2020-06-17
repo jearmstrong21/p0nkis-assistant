@@ -9,7 +9,6 @@ public class StarboardChannel {
     private int countRequired;
     private StarboardChannelSet channelSet;
     private StarboardReaction reaction;
-    private Color color;
     private Map<String, StarredMessage> starred2original;
     private Map<String, String> original2starred;
 
@@ -17,12 +16,11 @@ public class StarboardChannel {
 
     }
 
-    public StarboardChannel(String channelID, int countRequired, StarboardChannelSet channelSet, StarboardReaction reaction, Color color, Map<String, StarredMessage> starred2original, Map<String, String> original2starred) {
+    public StarboardChannel(String channelID, int countRequired, StarboardChannelSet channelSet, StarboardReaction reaction, Map<String, StarredMessage> starred2original, Map<String, String> original2starred) {
         this.channelID = channelID;
         this.countRequired = countRequired;
         this.channelSet = channelSet;
         this.reaction = reaction;
-        this.color = color;
         this.starred2original = starred2original;
         this.original2starred = original2starred;
     }
@@ -43,10 +41,6 @@ public class StarboardChannel {
         return reaction;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
     public Map<String, StarredMessage> getStarred2original() {
         return starred2original;
     }
@@ -61,6 +55,5 @@ public class StarboardChannel {
         System.out.println(countRequired);
         channelSet.print();
         reaction.print();
-        System.out.println(color);
     }
 }

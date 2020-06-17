@@ -8,10 +8,12 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.easycommand.annotations.CommandCog;
+import p0nki.easycommandtestbot.Colors;
 import p0nki.easycommandtestbot.data.StarboardChannel;
 import p0nki.easycommandtestbot.data.StarboardData;
 import p0nki.easycommandtestbot.data.StarboardReaction;
 import p0nki.easycommandtestbot.data.StarredMessage;
+import p0nki.easycommandtestbot.lib.requirements.RequireGuild;
 import p0nki.easycommandtestbot.lib.utils.Holder;
 
 import javax.annotation.Nonnull;
@@ -21,7 +23,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@CommandCog(name = "starboard")
+@CommandCog(name = "starboard", requirements = RequireGuild.class)
 public class StarboardCog extends ListenerAdapter implements Holder {
 
     private boolean matches(MessageReaction r, StarboardReaction reaction) {
@@ -76,7 +78,7 @@ public class StarboardCog extends ListenerAdapter implements Holder {
     private void processUnstarredMessage(Message original, StarboardChannel channel) {
         Set<User> starrers = getUsers(original, original.getAuthor(), channel.getReaction());
         if (starrers.size() >= channel.getCountRequired()) {
-            Message starred = embed(jda().getTextChannelById(channel.getChannelID()), original, channel.getReaction(), starrers, channel.getColor(), starrers.size());
+            Message starred = embed(jda().getTextChannelById(channel.getChannelID()), original, channel.getReaction(), starrers, Colors.PRIMARY, starrers.size());
             channel.getOriginal2starred().put(original.getId(), starred.getId());
             channel.getStarred2original().put(starred.getId(), new StarredMessage(original.getChannel().getId(), original.getId()));
         }

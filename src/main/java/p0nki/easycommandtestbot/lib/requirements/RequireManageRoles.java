@@ -6,9 +6,9 @@ import p0nki.easycommand.utils.Optional;
 import p0nki.easycommandtestbot.data.BotConfig;
 import p0nki.easycommandtestbot.lib.utils.DiscordSource;
 
-public class RequireManageServer extends TypedRequirement<DiscordSource> {
+public class RequireManageRoles extends TypedRequirement<DiscordSource> {
 
-    public RequireManageServer() {
+    public RequireManageRoles() {
         super(DiscordSource.class);
     }
 
@@ -16,8 +16,8 @@ public class RequireManageServer extends TypedRequirement<DiscordSource> {
     protected Optional<String> testType(DiscordSource source) {
         if (source.isGuild()) {
             if (source.member().getId().equals(BotConfig.VALUE.getOwner())) return Optional.empty();
-            if (source.member().hasPermission(Permission.MANAGE_SERVER)) return Optional.empty();
+            if (source.member().hasPermission(Permission.MANAGE_ROLES)) return Optional.empty();
         }
-        return Optional.of("must have manage server permission");
+        return Optional.of("must have manage roles permission");
     }
 }

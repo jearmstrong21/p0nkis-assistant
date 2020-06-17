@@ -2,6 +2,7 @@ package p0nki.easycommandtestbot.lib.utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import p0nki.easycommand.utils.Optional;
 import p0nki.easycommandtestbot.lib.EasyListener;
 import p0nki.easycommandtestbot.lib.page.Paginator;
 
@@ -21,6 +22,28 @@ public class DiscordUtils {
 
     private DiscordUtils() {
 
+    }
+
+    public static final String[] UNICODE_NUMBERS = new String[]{
+            "\u0031\ufe0f\u20e3",
+            "\u0032\ufe0f\u20e3",
+            "\u0033\ufe0f\u20e3",
+            "\u0034\ufe0f\u20e3",
+            "\u0035\ufe0f\u20e3",
+            "\u0036\ufe0f\u20e3",
+            "\u0037\ufe0f\u20e3",
+            "\u0038\ufe0f\u20e3",
+            "\u0039\ufe0f\u20e3",
+            "\ud83d\udd1f"
+    };
+
+    public static Optional<Integer> unicodeEmojiToIndex(String emoji) {
+        for (int i = 0; i < UNICODE_NUMBERS.length; i++) {
+            if (UNICODE_NUMBERS[i].equals(emoji)) {
+                return Optional.of(i);
+            }
+        }
+        return Optional.empty();
     }
 
     public static void verify(boolean b) {
