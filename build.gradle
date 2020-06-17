@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'com.github.jearmstrong21:EasyCommand:cee8ed5d28'
+    compile "net.dv8tion:JDA:4.1.1_101"
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+}
+
+apply plugin: 'application'
+mainClassName = 'p0nki.easycommandtestbot.EasyCommandTestBot'
