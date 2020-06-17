@@ -59,6 +59,8 @@ public class RolepollCog extends ListenerAdapter implements Holder {
                     if (role != null) {
                         event.getGuild().addRoleToMember(event.getMember(), role).queue();
                         event.getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(String.format("Added role %s (%s) in guild %s (%s)", role.getName(), role.getId(), event.getGuild().getName(), event.getGuild().getId())).queue());
+                    } else {
+                        System.out.println(String.format("ROLEPOLL null role %s in rolepoll %s", roleID, event.getMessageId()));
                     }
                 }
             }
@@ -82,7 +84,11 @@ public class RolepollCog extends ListenerAdapter implements Holder {
                         if (member != null) {
                             event.getGuild().removeRoleFromMember(event.getMember(), role).queue();
                             Objects.requireNonNull(event.getUser()).openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(String.format("Removed role %s (%s) in guild %s (%s)", role.getName(), role.getId(), event.getGuild().getName(), event.getGuild().getId())).queue());
+                        } else {
+                            System.out.println(String.format("ROLEPOLL null member %s in role %s in rolepoll %s", event.getUserId(), roleID, event.getMessageId()));
                         }
+                    } else {
+                        System.out.println(String.format("ROLEPOLL null role %s in rolepoll %s", roleID, event.getMessageId()));
                     }
                 }
             }
