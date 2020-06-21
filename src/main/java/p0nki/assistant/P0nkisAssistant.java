@@ -17,7 +17,6 @@ public class P0nkisAssistant {
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         EasyListener.INSTANCE
                 .setToken(Files.readString(Path.of(DiscordUtils.resource(BotConfig.VALUE.getTokenFile()))))
-                .setActivity(BotConfig.VALUE.getActivity())
                 .createJda()
                 .setPrefix(BotConfig.VALUE.getPrefix())
                 .setOwner(BotConfig.VALUE.getOwner())

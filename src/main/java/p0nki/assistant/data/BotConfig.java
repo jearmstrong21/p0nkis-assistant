@@ -11,7 +11,6 @@ public class BotConfig extends ReadData {
     private String tokenFile;
     private String prefix;
     private String owner;
-    private Activity activity;
 
     protected BotConfig() {
         super("botconfig");
@@ -28,9 +27,5 @@ public class BotConfig extends ReadData {
 
     public String getOwner() {
         return owner;
-    }
-
-    public Activity getActivity() {
-        return activity;
     }
 }
