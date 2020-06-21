@@ -16,6 +16,7 @@ dependencies {
     implementation 'com.github.jearmstrong21:EasyCommand:cee8ed5d28'
     compile "net.dv8tion:JDA:4.1.1_101"
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
+    implementation 'com.github.jearmstrong21:Javashit:1.0'
 }
 
 apply plugin: 'application'
