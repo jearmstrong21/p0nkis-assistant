@@ -24,8 +24,4 @@ public class StarboardData extends ReadWriteData {
         return channels;
     }
 
-    public void print(){
-        System.out.println();
-        channels.values().forEach(StarboardChannel::print);
-    }
 }

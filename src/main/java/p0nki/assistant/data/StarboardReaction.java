@@ -22,8 +22,4 @@ public class StarboardReaction {
         return isEmoji;
     }
 
-    public void print() {
-        System.out.println(reaction);
-        System.out.println(isEmoji);
-    }
 }

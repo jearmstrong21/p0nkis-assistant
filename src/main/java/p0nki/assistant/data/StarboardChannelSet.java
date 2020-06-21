@@ -32,8 +32,4 @@ public class StarboardChannelSet {
         return blacklist;
     }
 
-    public void print() {
-        channels.forEach(System.out::println);
-        System.out.println(blacklist);
-    }
 }

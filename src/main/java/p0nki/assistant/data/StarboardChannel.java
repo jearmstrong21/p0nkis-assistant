@@ -48,11 +48,4 @@ public class StarboardChannel {
         return original2starred;
     }
 
-    public void print() {
-        System.out.println();
-        System.out.println(channelID);
-        System.out.println(countRequired);
-        channelSet.print();
-        reaction.print();
-    }
 }
