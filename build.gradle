@@ -20,4 +20,4 @@ dependencies {
 }
 
 apply plugin: 'application'
-mainClassName = 'p0nki.easycommandtestbot.EasyCommandTestBot'
+mainClassName = 'p0nki.assistant.P0nkisAssistant'
