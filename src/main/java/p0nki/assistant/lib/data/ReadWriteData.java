@@ -6,6 +6,7 @@ import p0nki.assistant.lib.utils.DiscordUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public abstract class ReadWriteData {
 
@@ -57,7 +58,9 @@ public abstract class ReadWriteData {
             try {
                 File file = getFile();
                 if (!file.exists()) file.getParentFile().mkdirs();
-                EasyJackson.OBJECT_WRITER.writeValue(getFile(), this);
+                PrintWriter printWriter = new PrintWriter(getFile());
+                EasyJackson.OBJECT_WRITER.writeValue(printWriter, this);
+                printWriter.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

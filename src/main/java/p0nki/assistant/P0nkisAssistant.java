@@ -27,7 +27,6 @@ public class P0nkisAssistant {
                         InfoCog.class,
                         DebugCog.class,
                         CounterCog.class,
-                        ReminderCog.class,
                         StarboardCog.class,
                         RolepollCog.class,
                         StatusCog.class
