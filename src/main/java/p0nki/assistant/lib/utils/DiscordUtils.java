@@ -2,9 +2,9 @@ package p0nki.assistant.lib.utils;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import p0nki.easycommand.utils.Optional;
 import p0nki.assistant.lib.EasyListener;
 import p0nki.assistant.lib.page.Paginator;
+import p0nki.easycommand.utils.Optional;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

@@ -46,6 +46,7 @@ public abstract class ReadWriteData {
 
     protected final void read() {
         try {
+            System.out.println("READ (mutable) " + getFile().toString());
             EasyJackson.OBJECT_MAPPER.readerForUpdating(this).readValue(getFile());
         } catch (FileNotFoundException ignored) {
         } catch (IOException e) {
@@ -58,6 +59,7 @@ public abstract class ReadWriteData {
             try {
                 File file = getFile();
                 if (!file.exists()) file.getParentFile().mkdirs();
+                System.out.println("WRITE " + file.toString());
                 PrintWriter printWriter = new PrintWriter(getFile());
                 EasyJackson.OBJECT_WRITER.writeValue(printWriter, this);
                 printWriter.close();

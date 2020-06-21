@@ -16,14 +16,16 @@ public class ActivityDeserializer extends StdDeserializer<Activity> {
         super(Activity.class);
     }
 
+    public static Activity.ActivityType deserializeType(String type) {
+        if (type.equals("play")) return Activity.ActivityType.DEFAULT;
+        if (type.equals("listen")) return Activity.ActivityType.LISTENING;
+        throw new UnsupportedOperationException("No supported activity type " + type);
+    }
+
     @Override
     public Activity deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         JsonNode node = p.getCodec().readTree(p);
-        String content = node.get("content").asText();
-        String type = node.get("type").asText();
-        if (type.equals("playing")) return Activity.playing(content);
-        if (type.equals("listening")) return Activity.listening(content);
-        throw new UnsupportedClassVersionError(type);
+        return Activity.of(deserializeType(node.get("type").asText()), node.get("content").asText());
     }
 
 }

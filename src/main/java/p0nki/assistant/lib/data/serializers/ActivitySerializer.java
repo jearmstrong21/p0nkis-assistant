@@ -15,11 +15,17 @@ public class ActivitySerializer extends StdSerializer<Activity> {
         super(Activity.class);
     }
 
+    public static String serializeType(Activity activity) {
+        if (activity.getType() == Activity.ActivityType.DEFAULT) return "play";
+        if (activity.getType() == Activity.ActivityType.LISTENING) return "listen";
+        throw new UnsupportedOperationException("Activity type is not supported " + activity.getType().toString());
+    }
+
     @Override
     public void serialize(Activity value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
         gen.writeStringField("content", value.getName());
-        gen.writeStringField("type", value.getType().name().toLowerCase());
+        gen.writeStringField("type", serializeType(value));
         gen.writeEndObject();
     }
 }
