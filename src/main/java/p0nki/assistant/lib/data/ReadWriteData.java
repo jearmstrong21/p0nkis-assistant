@@ -56,7 +56,7 @@ public abstract class ReadWriteData {
         new Thread(() -> {
             try {
                 File file = getFile();
-                if (!file.exists()) DiscordUtils.verify(file.getParentFile().mkdirs());
+                if (!file.exists()) file.getParentFile().mkdirs();
                 EasyJackson.OBJECT_WRITER.writeValue(getFile(), this);
             } catch (IOException e) {
                 throw new RuntimeException(e);

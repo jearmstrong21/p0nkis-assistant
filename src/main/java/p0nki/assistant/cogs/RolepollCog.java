@@ -3,9 +3,11 @@ package p0nki.assistant.cogs;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import p0nki.assistant.lib.utils.CogInitializer;
 import p0nki.easycommand.annotations.*;
 import p0nki.easycommand.utils.Optional;
 import p0nki.assistant.Colors;
@@ -24,25 +26,28 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @CommandCog(name = "rolepoll", requirements = RequireGuild.class)
-public class RolepollCog extends ListenerAdapter implements Holder {
+public class RolepollCog extends ListenerAdapter implements Holder, CogInitializer {
 
-    @Command(literals = @Literal("rolepoll"), names = {"add", "a"}, requirements = {RequireManageServer.class, RequireManageRoles.class})
-    public void add(@Source DiscordSource source, @Argument(name = "roles", maximumCount = 10) Role[] roles) {
-        for (Role role : roles) {
-            if (!source.member().canInteract(role)) {
-                source.send("You cannot interact with the role " + role.getName() + " (" + role.getId() + ").");
-                return;
-            }
-        }
-        EmbedBuilder embed = new EmbedBuilder().setTitle("Rolepoll").setColor(Colors.PRIMARY);
-        for (int i = 0; i < roles.length; i++) {
-            embed.getDescriptionBuilder().append(DiscordUtils.UNICODE_NUMBERS[i]).append(" ").append(roles[i].getAsMention()).append("\n");
-        }
-        source.channel().sendMessage(embed.build()).queue(message -> {
-            for (int i = 0; i < roles.length; i++) message.addReaction(DiscordUtils.UNICODE_NUMBERS[i]).queue();
-            RolepollData.CACHE.of(source.guild()).makeRolepoll(message.getId(), Arrays.stream(roles).map(Role::getId).collect(Collectors.toList()));
-        });
-    }
+    // TODO: update all rolepolls command, not on start
+
+    //    @Command(literals = @Literal("rolepoll"), names = {"add", "a"}, requirements = {RequireManageServer.class, RequireManageRoles.class})
+//    public void add(@Source DiscordSource source, @Argument(name = "roles", maximumCount = 10) Role[] roles) {
+//        for (Role role : roles) {
+//            if (!source.member().canInteract(role)) {
+//                source.send("You cannot interact with the role " + role.getName() + " (" + role.getId() + ").");
+//                return;
+//            }
+//        }
+//        EmbedBuilder embed = new EmbedBuilder().setTitle("Rolepoll").setColor(Colors.PRIMARY);
+//        for (int i = 0; i < roles.length; i++) {
+//            embed.getDescriptionBuilder().append(DiscordUtils.UNICODE_NUMBERS[i]).append(" ").append(roles[i].getAsMention()).append("\n");
+//        }
+//        source.channel().sendMessage(embed.build()).queue(message -> {
+//            for (int i = 0; i < roles.length; i++) message.addReaction(DiscordUtils.UNICODE_NUMBERS[i]).queue();
+//            RolepollData.CACHE.of(source.guild()).makeRolepoll(message.getId(), Arrays.stream(roles).map(Role::getId).collect(Collectors.toList()));
+//        });
+//    }
+
 
     @Override
     public void onGuildMessageReactionAdd(@Nonnull GuildMessageReactionAddEvent event) {

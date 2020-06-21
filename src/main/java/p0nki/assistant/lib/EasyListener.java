@@ -7,12 +7,12 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import p0nki.easycommand.CommandDispatcher;
-import p0nki.easycommand.utils.Optional;
 import p0nki.assistant.lib.utils.CogInitializer;
 import p0nki.assistant.lib.utils.DiscordParsers;
 import p0nki.assistant.lib.utils.DiscordSource;
 import p0nki.assistant.lib.utils.DiscordUtils;
+import p0nki.easycommand.CommandDispatcher;
+import p0nki.easycommand.utils.Optional;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
@@ -47,7 +47,7 @@ public class EasyListener extends ListenerAdapter {
     public EasyListener createJda() throws LoginException, InterruptedException {
         jda = new JDABuilder()
                 .setBulkDeleteSplittingEnabled(true)
-                .setToken(token)
+                .setToken(token.trim())
                 .setActivity(activity)
                 .addEventListeners(this)
                 .build()
