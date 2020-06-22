@@ -62,7 +62,7 @@ add: `enabled`
 list: `enabled || manage-server || manage-message`
      */
 
-    @Command(literals = {@Literal("trick"), @Literal({"add", "a"})}, names = {"javashit", "js"})
+    @Command(literals = {@Literal("trick"), @Literal({"add", "a"})}, names = {"javascript", "js"})
     public void add(@Source DiscordSource source, @Argument(name = "name") String name, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
         TrickData data = TrickData.CACHE.of(source);
         if (data.isEnabled()) {

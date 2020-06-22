@@ -29,7 +29,7 @@ public class EvalCog implements Holder {
         return contextMap.get(source.user().getId());
     }
 
-    @Command(literals = @Literal({"javashit", "js"}), names = "eval")
+    @Command(literals = @Literal({"javascript", "js"}), names = "eval")
     public void eval(@Source DiscordSource source, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
         if (code.startsWith("```") && code.endsWith("```") && code.length() > 6) {
             code = code.substring(3, code.length() - 3);
