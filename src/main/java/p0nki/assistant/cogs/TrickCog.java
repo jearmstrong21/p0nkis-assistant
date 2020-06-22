@@ -63,13 +63,29 @@ list: `enabled || manage-server || manage-message`
      */
 
     @Command(literals = {@Literal("trick"), @Literal({"add", "a"})}, names = {"javascript", "js"})
-    public void add(@Source DiscordSource source, @Argument(name = "name") String name, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
+    public void addJS(@Source DiscordSource source, @Argument(name = "name") String name, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
         TrickData data = TrickData.CACHE.of(source);
         if (data.isEnabled()) {
             if (data.hasName(name)) {
                 source.send(NAME_EXISTS);
             } else {
                 Trick trick = new Trick(name, source.user().getId(), TrickType.JS, code, System.currentTimeMillis(), 0);
+                data.add(trick);
+                source.channel().sendMessage("Trick added").embed(embed(trick)).queue();
+            }
+        } else {
+            source.send(DISABLED);
+        }
+    }
+
+    @Command(literals = {@Literal("trick"), @Literal({"add", "a"})}, names = {"str", "s"})
+    public void addStr(@Source DiscordSource source, @Argument(name = "name") String name, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
+        TrickData data = TrickData.CACHE.of(source);
+        if (data.isEnabled()) {
+            if (data.hasName(name)) {
+                source.send(NAME_EXISTS);
+            } else {
+                Trick trick = new Trick(name, source.user().getId(), TrickType.STR, code, System.currentTimeMillis(), 0);
                 data.add(trick);
                 source.channel().sendMessage("Trick added").embed(embed(trick)).queue();
             }
