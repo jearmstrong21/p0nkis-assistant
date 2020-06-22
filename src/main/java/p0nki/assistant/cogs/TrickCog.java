@@ -201,6 +201,7 @@ list: `enabled || manage-server || manage-message`
                 }
                 if (data.hasName(trickName)) {
                     Trick trick = data.fromName(trickName);
+                    System.out.println("TRICK " + trickName);
                     if (trick.getType() == TrickType.JS) {
                         JSContext context = new JSContext(null, new HashMap<>());
                         context.set("println", Builtins.PRINTLN);

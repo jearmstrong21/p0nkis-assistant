@@ -39,6 +39,7 @@ public class JSEvaluator {
                     tokenizeExceptionConsumer.accept(e);
                     return;
                 }
+                System.out.println("JSEVAL tokenize");
                 JSASTCreator astCreator = new JSASTCreator();
                 List<JSObject> objects = new ArrayList<>();
                 try {
@@ -54,11 +55,14 @@ public class JSEvaluator {
                     evalExceptionConsumer.accept(e);
                 }
                 anythingSent[0] = true;
+                System.out.println("JSEVAL parse and eval");
                 objectConsumer.accept(objects);
             }).get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | TimeoutException e) {
-            if (!anythingSent[0])
+            if (!anythingSent[0]) {
+                System.out.println("JSEVAL timeout");
                 timeoutRunnable.run();
+            }
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
