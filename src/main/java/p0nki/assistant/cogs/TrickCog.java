@@ -42,6 +42,7 @@ public class TrickCog extends ListenerAdapter implements Holder {
         return new EmbedBuilder()
                 .setColor(Colors.PRIMARY)
                 .setTitle("Trick")
+                .addField("Name", trick.getName(), false)
                 .addField("Owner", formattedOwner, false)
                 .addField("Type", trick.getType().toString().toLowerCase(), false)
                 .addField("Code length", trick.getCode().length() + " characters", false)
@@ -143,6 +144,20 @@ list: `enabled || manage-server || manage-message`
         }
     }
 
+    @Command(literals = @Literal("trick"), names = {"source", "s"})
+    public void source(@Source DiscordSource source, @Argument(name = "name") String name) {
+        TrickData data = TrickData.CACHE.of(source);
+        if (data.isEnabled() || source.member().hasPermission(Permission.MESSAGE_MANAGE) || source.isOwner()) {
+            if (data.hasName(name)) {
+                source.sendCensored("```\n" + data.fromName(name).getCode() + "```");
+            } else {
+                source.send(NO_SUCH_TRICK);
+            }
+        } else {
+            source.send(DISABLED);
+        }
+    }
+
     @Command(literals = @Literal("trick"), names = {"enable", "e"}, requirements = RequireManageServer.class)
     public void enable(@Source DiscordSource source) {
         TrickData.CACHE.of(source).setEnabled(true);
@@ -188,8 +203,6 @@ list: `enabled || manage-server || manage-message`
                                 jsObjects -> {
                                     if (jsObjects.size() == 0) source.send("No objects as output");
                                     else source.sendCensored(jsObjects.get(jsObjects.size() - 1).castToString());
-//                                    if (jsObjects.size() > 1) source.send("Received too many objects as output");
-//                                    else source.sendCensored(jsObjects.get(0).toString());
                                 }
                         );
                     } else if (trick.getType() == TrickType.STR) {
