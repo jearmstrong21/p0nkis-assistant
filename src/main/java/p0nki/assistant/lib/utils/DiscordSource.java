@@ -2,8 +2,8 @@ package p0nki.assistant.lib.utils;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.*;
+import p0nki.assistant.data.BotConfig;
 import p0nki.easycommand.utils.Optional;
-import p0nki.assistant.lib.EasyListener;
 
 public class DiscordSource {
 
@@ -17,8 +17,12 @@ public class DiscordSource {
         channel().sendMessage(result).queue();
     }
 
-    public boolean isFromOwner() {
-        return user().getId().equals(EasyListener.INSTANCE.getOwner().getId());
+    public void sendCensored(CharSequence result) {
+        send(DiscordUtils.censorPings(this, result.toString()));
+    }
+
+    public boolean isOwner() {
+        return user().getId().equals(BotConfig.VALUE.getOwner());
     }
 
     public JDA jda() {

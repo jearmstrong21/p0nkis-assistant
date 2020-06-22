@@ -37,6 +37,18 @@ public class DiscordUtils {
             "\ud83d\udd1f"
     };
 
+    static {
+        System.out.print("[\"");
+        System.out.print(UNICODE_NUMBERS[0]);
+        System.out.print("\"");
+        for (int i = 1; i < UNICODE_NUMBERS.length; i++) {
+            System.out.print(",\"");
+            System.out.print(UNICODE_NUMBERS[i]);
+            System.out.print("\"");
+        }
+        System.out.println("]");
+    }
+
     public static Optional<Integer> unicodeEmojiToIndex(String emoji) {
         for (int i = 0; i < UNICODE_NUMBERS.length; i++) {
             if (UNICODE_NUMBERS[i].equals(emoji)) {

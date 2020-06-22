@@ -63,7 +63,7 @@ public class DiscordParsers {
         if (ds.isPrivateChannel()) users.add(ds.privateChannel().getUser());
         if (ds.isGuild())
             users.addAll(ds.guild().getMembers().stream().map(Member::getUser).collect(Collectors.toSet()));
-        if (ds.isFromOwner()) users.addAll(ds.jda().getUsers());
+        if (ds.isOwner()) users.addAll(ds.jda().getUsers());
         for (User user : users) {
             if (user.getId().equals(str)) return Optional.of(user);
         }

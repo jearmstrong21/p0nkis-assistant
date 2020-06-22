@@ -3,10 +3,10 @@ package p0nki.assistant.lib;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import p0nki.assistant.data.BotConfig;
 import p0nki.assistant.lib.utils.CogInitializer;
 import p0nki.assistant.lib.utils.DiscordParsers;
 import p0nki.assistant.lib.utils.DiscordSource;
@@ -26,9 +26,7 @@ public class EasyListener extends ListenerAdapter {
 
     private final CommandDispatcher dispatcher;
     private final List<CogInitializer> cogInitializers = new ArrayList<>();
-    private String prefix;
     private JDA jda;
-    private String owner;
     private String token;
     private Activity activity;
 
@@ -73,21 +71,7 @@ public class EasyListener extends ListenerAdapter {
         return this;
     }
 
-    public User getOwner() {
-        return jda.getUserById(owner);
-    }
-
     // TODO: EasyListenerBuilder
-
-    public EasyListener setOwner(String owner) {
-        this.owner = owner;
-        return this;
-    }
-
-    public EasyListener setPrefix(String prefix) {
-        this.prefix = prefix;
-        return this;
-    }
 
     public EasyListener addCog(Class<?>... classes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         for (Class<?> clazz : classes) {
@@ -112,10 +96,11 @@ public class EasyListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+        if (event.getAuthor().isBot()) return;
         String msg = event.getMessage().getContentRaw();
-        if (msg.startsWith(prefix)) {
+        if (msg.startsWith(BotConfig.VALUE.getPrefix())) {
             DiscordSource source = new DiscordSource(event.getMessage());
-            String command = msg.substring(prefix.length());
+            String command = msg.substring(BotConfig.VALUE.getPrefix().length());
             try {
                 Optional<String> result = dispatcher.run(source, command);
                 if (result.isPresent() && result.get().equals("No command found")) return;

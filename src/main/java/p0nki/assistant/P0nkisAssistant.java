@@ -2,7 +2,6 @@ package p0nki.assistant;
 
 import p0nki.assistant.cogs.*;
 import p0nki.assistant.data.BotConfig;
-import p0nki.assistant.data.StarboardData;
 import p0nki.assistant.lib.EasyListener;
 import p0nki.assistant.lib.utils.DiscordUtils;
 
@@ -18,8 +17,6 @@ public class P0nkisAssistant {
         EasyListener.INSTANCE
                 .setToken(Files.readString(Path.of(DiscordUtils.resource(BotConfig.VALUE.getTokenFile()))))
                 .createJda()
-                .setPrefix(BotConfig.VALUE.getPrefix())
-                .setOwner(BotConfig.VALUE.getOwner())
                 .addCog(
                         UtilsCog.class,
                         InfoCog.class,
@@ -27,7 +24,9 @@ public class P0nkisAssistant {
                         CounterCog.class,
                         StarboardCog.class,
                         RolepollCog.class,
-                        StatusCog.class
+                        StatusCog.class,
+                        EvalCog.class,
+                        TrickCog.class
                 )
                 .initializeCogs();
     }
