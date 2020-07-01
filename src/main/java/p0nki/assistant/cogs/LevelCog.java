@@ -7,10 +7,14 @@ import p0nki.assistant.data.LevelData;
 import p0nki.assistant.lib.requirements.RequireGuild;
 import p0nki.assistant.lib.requirements.RequireManageServer;
 import p0nki.assistant.lib.utils.DiscordSource;
+import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.assistant.lib.utils.Holder;
 import p0nki.easycommand.annotations.*;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @CommandCog(name = "level", requirements = RequireGuild.class)
 public class LevelCog extends ListenerAdapter implements Holder {
@@ -50,6 +54,31 @@ public class LevelCog extends ListenerAdapter implements Holder {
             int xp = data.getXp(user);
             int xpRequired = LevelData.getXpForLevel(level);
             source.send(String.format("At level %s, with %s/%s XP to the next level. Chat on, товарищ!", level, xp, xpRequired));
+        } else {
+            source.send("Levelling is disabled in this guild");
+        }
+    }
+
+    @Command(names = "levels")
+    public void levels(@Source DiscordSource source) {
+        LevelData data = LevelData.CACHE.of(source);
+        if (data.isEnabled()) {
+            List<User> users = data.getKeys().stream().map(jda()::getUserById).filter(Objects::nonNull).sorted((o1, o2) -> {
+                int l1 = data.getLevel(o1);
+                int l2 = data.getLevel(o2);
+                int x1 = data.getXp(o1);
+                int x2 = data.getXp(o2);
+                if (l1 < l2) return 1;
+                if (l1 > l2) return -1;
+                if (x1 < x2) return 1;
+                if (x1 > x2) return -1;
+                return o1.getAsTag().compareTo(o2.getAsTag());
+            }).collect(Collectors.toList());
+            DiscordUtils.paginateList(source, users.size(), 10, 0, index -> {
+                User user = users.get(index);
+                int level = data.getLevel(user);
+                return user.getAsMention() + " (" + user.getAsTag() + "): " + level + " (" + data.getXp(user) + " / " + LevelData.getXpForLevel(level) + ")";
+            });
         } else {
             source.send("Levelling is disabled in this guild");
         }

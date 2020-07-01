@@ -5,8 +5,7 @@ import p0nki.assistant.lib.data.PerGuildDataCache;
 import p0nki.assistant.lib.data.ReadWriteData;
 
 import javax.annotation.CheckReturnValue;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LevelData extends ReadWriteData {
 
@@ -22,6 +21,14 @@ public class LevelData extends ReadWriteData {
 
     private LevelData(String dir) {
         super(dir);
+    }
+
+    public int size() {
+        return xp.size();
+    }
+
+    public List<String> getKeys() {
+        return new ArrayList<>(new TreeSet<>(xp.keySet()));
     }
 
     public static int getXpForLevel(int level) {
@@ -55,6 +62,14 @@ public class LevelData extends ReadWriteData {
 
     public int getLevel(User user) {
         return levels.getOrDefault(user.getId(), 0);
+    }
+
+    public int getLevel(String id) {
+        return levels.getOrDefault(id, 0);
+    }
+
+    public int getXp(String id) {
+        return xp.getOrDefault(id, 0);
     }
 
     public long getLastXpTime(User user) {
