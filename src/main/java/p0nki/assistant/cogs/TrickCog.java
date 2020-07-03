@@ -154,7 +154,7 @@ list: `enabled || manage-server || manage-message`
         TrickData data = TrickData.CACHE.of(source);
         if (data.isEnabled() || source.member().hasPermission(Permission.MESSAGE_MANAGE) || source.isOwner()) {
             List<Trick> tricks = data.getTricks();
-            DiscordUtils.paginateList(source, tricks.size(), 10, 0, index -> String.format("[%s] %s", tricks.get(index).getType().toString().toLowerCase(), tricks.get(index).getName()));
+            DiscordUtils.paginateList(source, tricks.size(), 0, index -> String.format("[%s] %s", tricks.get(index).getType().toString().toLowerCase(), tricks.get(index).getName()));
         } else {
             source.send(DISABLED);
         }
@@ -194,13 +194,13 @@ list: `enabled || manage-server || manage-message`
             String content = source.message().getContentRaw();
             if (content.startsWith("!!")) {
                 content = content.substring(2);
-                String trickName = "";
+                StringBuilder trickName = new StringBuilder();
                 while (content.length() > 0 && content.charAt(0) != ' ') {
-                    trickName += content.charAt(0);
+                    trickName.append(content.charAt(0));
                     content = content.substring(1);
                 }
-                if (data.hasName(trickName)) {
-                    Trick trick = data.fromName(trickName);
+                if (data.hasName(trickName.toString())) {
+                    Trick trick = data.fromName(trickName.toString());
                     System.out.println("TRICK " + trickName);
                     if (trick.getType() == TrickType.JS) {
                         JSContext context = new JSContext(null, new HashMap<>());

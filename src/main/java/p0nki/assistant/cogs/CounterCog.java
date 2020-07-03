@@ -2,8 +2,6 @@ package p0nki.assistant.cogs;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import p0nki.easycommand.annotations.*;
-import p0nki.easycommand.arguments.Parsers;
 import p0nki.assistant.data.CounterData;
 import p0nki.assistant.lib.requirements.RequireGuild;
 import p0nki.assistant.lib.requirements.RequireManageServer;
@@ -11,6 +9,8 @@ import p0nki.assistant.lib.requirements.RequireMessageManage;
 import p0nki.assistant.lib.utils.DiscordSource;
 import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.assistant.lib.utils.Holder;
+import p0nki.easycommand.annotations.*;
+import p0nki.easycommand.arguments.Parsers;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class CounterCog extends ListenerAdapter implements Holder {
         if (data.isEnabled()) {
             List<String> keys = new ArrayList<>(data.keys());
             Collections.sort(keys);
-            DiscordUtils.paginateList(source, keys.size(), 10, 0, value -> keys.get(value) + " = " + data.get(keys.get(value)));
+            DiscordUtils.paginateList(source, keys.size(), 0, value -> keys.get(value) + " = " + data.get(keys.get(value)));
         } else {
             source.send("Counters disabled in this guild");
         }

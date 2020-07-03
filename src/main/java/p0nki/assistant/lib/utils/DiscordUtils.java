@@ -71,7 +71,8 @@ public class DiscordUtils {
         return "data/" + path;
     }
 
-    public static void paginateList(DiscordSource source, int itemCount, int itemsPerPage, int startPage, IntFunction<String> function) {
+    public static void paginateList(DiscordSource source, int itemCount, int startPage, IntFunction<String> function) {
+        final int itemsPerPage = 10;
         int totalPageCount = itemCount / itemsPerPage + (itemCount % itemsPerPage > 0 ? 1 : 0);
         new Paginator(index -> {
             EmbedBuilder builder = new EmbedBuilder().setTitle("Page " + (index + 1) + "/" + totalPageCount);

@@ -28,7 +28,8 @@ public class P0nkisAssistant {
                         EvalCog.class,
                         TrickCog.class,
                         NickCog.class,
-                        LevelCog.class
+                        LevelCog.class,
+                        DataDebugCog.class
                 )
                 .initializeCogs();
     }

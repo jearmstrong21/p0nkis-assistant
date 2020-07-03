@@ -13,6 +13,8 @@ import p0nki.assistant.lib.utils.Holder;
 import p0nki.easycommand.annotations.*;
 import p0nki.easycommand.arguments.Parsers;
 
+import java.util.Objects;
+
 @CommandCog(name = "status", requirements = RequireOwner.class)
 public class StatusCog implements Holder, CogInitializer {
 
@@ -37,7 +39,7 @@ public class StatusCog implements Holder, CogInitializer {
 
     @Command(literals = @Literal("status"), names = {"list", "l"})
     public void list(@Source DiscordSource source) {
-        DiscordUtils.paginateList(source, StatusData.VALUE.getActivities().size(), 5, 0, index -> {
+        DiscordUtils.paginateList(source, StatusData.VALUE.getActivities().size(), 0, index -> {
             Activity activity = StatusData.VALUE.getActivities().get(index);
             return ActivitySerializer.serializeType(activity) + ": " + activity.getName();
         });
@@ -72,7 +74,7 @@ public class StatusCog implements Holder, CogInitializer {
 
     @Command(literals = @Literal("status"), names = {"info", "i"})
     public void info(@Source DiscordSource source) {
-        source.send(String.format("Current status type: %s\nPeriod: %s\nTime until next change: %s", ActivitySerializer.serializeType(jda().getPresence().getActivity()), StatusData.VALUE.getPeriod() + "ms", DiscordUtils.formatTimeDifference(System.currentTimeMillis(), nextUpdate)));
+        source.send(String.format("Current status type: %s\nPeriod: %s\nTime until next change: %s", ActivitySerializer.serializeType(Objects.requireNonNull(jda().getPresence().getActivity())), StatusData.VALUE.getPeriod() + "ms", DiscordUtils.formatTimeDifference(System.currentTimeMillis(), nextUpdate)));
     }
 
     @Command(literals = @Literal("status"), names = {"period", "p"}, requirements = RequireOwner.class)

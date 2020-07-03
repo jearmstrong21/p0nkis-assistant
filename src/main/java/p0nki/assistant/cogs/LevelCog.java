@@ -74,7 +74,7 @@ public class LevelCog extends ListenerAdapter implements Holder {
                 if (x1 > x2) return -1;
                 return o1.getAsTag().compareTo(o2.getAsTag());
             }).collect(Collectors.toList());
-            DiscordUtils.paginateList(source, users.size(), 10, 0, index -> {
+            DiscordUtils.paginateList(source, users.size(), 0, index -> {
                 User user = users.get(index);
                 int level = data.getLevel(user);
                 return user.getAsMention() + " (" + user.getAsTag() + "): " + level + " (" + data.getXp(user) + " / " + LevelData.getXpForLevel(level) + ")";
