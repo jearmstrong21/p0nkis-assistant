@@ -39,9 +39,9 @@ public class EvalCog implements Holder {
                 code,
                 get(source),
                 () -> source.send("Timeout while evaluating code"),
-                tokenizeException -> source.sendCensored("Tokenize exception\n```\n" + tokenizeException.getMessage() + "\nat index " + tokenizeException.getIndex() + "\n```"),
-                parseException -> source.sendCensored(String.format("Parse exception\n```\n%s\nat token %s [%d,%d]", parseException.getMessage(), parseException.getToken().toString(), parseException.getToken().getStart(), parseException.getToken().getEnd())),
-                evalException -> source.sendCensored(String.format("Eval exception\n```\n%s\n```", evalException.getObject().toString())),
+                tokenizeException -> source.send("Tokenize exception\n```\n" + tokenizeException.getMessage() + "\nat index " + tokenizeException.getIndex() + "\n```"),
+                parseException -> source.send(String.format("Parse exception\n```\n%s\nat token %s [%d,%d]", parseException.getMessage(), parseException.getToken().toString(), parseException.getToken().getStart(), parseException.getToken().getEnd())),
+                evalException -> source.send(String.format("Eval exception\n```\n%s\n```", evalException.getObject().toString())),
                 jsObjects -> {
                     if (jsObjects.size() == 0) source.send("No objects result");
                     else

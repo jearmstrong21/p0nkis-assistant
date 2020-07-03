@@ -69,7 +69,7 @@ public class CounterCog extends ListenerAdapter implements Holder {
     public void info(@Source DiscordSource source, @Argument(name = "name") String name) {
         CounterData data = CounterData.CACHE.of(source);
         if (data.isEnabled()) {
-            source.send(DiscordUtils.censorPings(source, name + " = " + data.get(name)));
+            source.send(name + " = " + data.get(name));
         } else {
             source.send("Counters disabled in this guild");
         }
@@ -91,7 +91,7 @@ public class CounterCog extends ListenerAdapter implements Holder {
             if (content.endsWith("++") || content.endsWith("--")) content = content.substring(0, content.length() - 2);
             if (content.length() == 0) return;
             int newValue = data.add(content, change);
-            event.getChannel().sendMessage(DiscordUtils.censorPings(new DiscordSource(event.getMessage()), content + " = " + newValue)).queue();
+            event.getChannel().sendMessage(content + " = " + newValue).allowedMentions(Collections.emptyList()).queue();
         }
     }
 

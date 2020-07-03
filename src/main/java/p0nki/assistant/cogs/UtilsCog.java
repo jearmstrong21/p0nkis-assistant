@@ -2,16 +2,15 @@ package p0nki.assistant.cogs;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import p0nki.assistant.lib.page.Paginator;
+import p0nki.assistant.lib.utils.DiscordSource;
+import p0nki.assistant.lib.utils.Holder;
 import p0nki.easycommand.RealCommandCog;
 import p0nki.easycommand.annotations.Argument;
 import p0nki.easycommand.annotations.Command;
 import p0nki.easycommand.annotations.CommandCog;
 import p0nki.easycommand.annotations.Source;
 import p0nki.easycommand.arguments.Parsers;
-import p0nki.assistant.lib.page.Paginator;
-import p0nki.assistant.lib.utils.DiscordSource;
-import p0nki.assistant.lib.utils.DiscordUtils;
-import p0nki.assistant.lib.utils.Holder;
 
 import java.util.stream.Collectors;
 
@@ -86,7 +85,7 @@ public class UtilsCog extends ListenerAdapter implements Holder {
 
     @Command(names = "echo")
     public void echo(@Source DiscordSource source, @Argument(name = "value", modifiers = Parsers.GREEDY_STRING) String value) {
-        source.send(DiscordUtils.censorPings(source, value));
+        source.send(value);
     }
 
 }

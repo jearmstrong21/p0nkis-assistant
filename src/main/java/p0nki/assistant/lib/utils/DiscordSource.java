@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.*;
 import p0nki.assistant.data.BotConfig;
 import p0nki.easycommand.utils.Optional;
 
+import java.util.Collections;
+
 public class DiscordSource {
 
     private final Message message;
@@ -14,11 +16,7 @@ public class DiscordSource {
     }
 
     public void send(CharSequence result) {
-        channel().sendMessage(result).queue();
-    }
-
-    public void sendCensored(CharSequence result) {
-        send(DiscordUtils.censorPings(this, result.toString()));
+        channel().sendMessage(result).allowedMentions(Collections.emptyList()).queue();
     }
 
     public boolean isOwner() {

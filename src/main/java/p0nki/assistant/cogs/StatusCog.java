@@ -51,7 +51,7 @@ public class StatusCog implements Holder, CogInitializer {
             StatusData.VALUE.addActivity(Activity.of(ActivityDeserializer.deserializeType(type), content));
             source.send("Added status");
         } catch (UnsupportedOperationException e) {
-            source.send(DiscordUtils.censorPings(source, e.getMessage()));
+            source.send(e.getMessage());
         }
     }
 

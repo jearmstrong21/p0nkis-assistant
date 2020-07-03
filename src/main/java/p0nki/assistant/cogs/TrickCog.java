@@ -165,7 +165,7 @@ list: `enabled || manage-server || manage-message`
         TrickData data = TrickData.CACHE.of(source);
         if (data.isEnabled() || source.member().hasPermission(Permission.MESSAGE_MANAGE) || source.isOwner()) {
             if (data.hasName(name)) {
-                source.sendCensored("```\n" + data.fromName(name).getCode() + "```");
+                source.send("```\n" + data.fromName(name).getCode() + "```");
             } else {
                 source.send(NO_SUCH_TRICK);
             }
@@ -214,16 +214,16 @@ list: `enabled || manage-server || manage-message`
                                 trick.getCode(),
                                 context,
                                 () -> source.send("Timeout while evaluating code"),
-                                tokenizeException -> source.sendCensored("Tokenize exception\n```\n" + tokenizeException.getMessage() + "\nat index " + tokenizeException.getIndex() + "\n```"),
-                                parseException -> source.sendCensored(String.format("Parse exception\n```\n%s\nat token %s [%d,%d]", parseException.getMessage(), parseException.getToken().toString(), parseException.getToken().getStart(), parseException.getToken().getEnd())),
-                                evalException -> source.sendCensored(String.format("Eval exception\n```\n%s\n```", evalException.getObject().toString())),
+                                tokenizeException -> source.send("Tokenize exception\n```\n" + tokenizeException.getMessage() + "\nat index " + tokenizeException.getIndex() + "\n```"),
+                                parseException -> source.send(String.format("Parse exception\n```\n%s\nat token %s [%d,%d]", parseException.getMessage(), parseException.getToken().toString(), parseException.getToken().getStart(), parseException.getToken().getEnd())),
+                                evalException -> source.send(String.format("Eval exception\n```\n%s\n```", evalException.getObject().toString())),
                                 jsObjects -> {
                                     if (jsObjects.size() == 0) source.send("No objects as output");
-                                    else source.sendCensored(jsObjects.get(jsObjects.size() - 1).castToString());
+                                    else source.send(jsObjects.get(jsObjects.size() - 1).castToString());
                                 }
                         );
                     } else if (trick.getType() == TrickType.STR) {
-                        source.sendCensored(trick.getCode());
+                        source.send(trick.getCode());
                     } else {
                         throw new UnsupportedOperationException();
                     }

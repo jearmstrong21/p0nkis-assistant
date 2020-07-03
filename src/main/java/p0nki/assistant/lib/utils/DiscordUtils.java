@@ -6,8 +6,6 @@ import p0nki.assistant.lib.EasyListener;
 import p0nki.assistant.lib.page.Paginator;
 import p0nki.easycommand.utils.Optional;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -98,22 +96,6 @@ public class DiscordUtils {
         long seconds = ChronoUnit.SECONDS.between(startInstant, endInstant) % 60;
         long millis = ChronoUnit.MILLIS.between(startInstant, endInstant) % 1000;
         return String.format("%s years, %s months, %s days, %s hours, %s minutes, %s seconds, and %s milliseconds", years, months, days, hours, minutes, seconds, millis);
-    }
-
-    @CheckReturnValue
-    public static String censorPings(@Nullable DiscordSource source, @Nonnull String message) {
-        message = message.replaceAll("@everyone", "@\u0435veryone");
-        message = message.replaceAll("@here", "@h\u0435re");
-        if (source != null && source.isGuild()) {
-            for (Role role : source.guild().getRoles()) {
-                message = message.replaceAll(role.getAsMention(), "@" + role.getName());
-            }
-            for (Member member : source.guild().getMembers()) {
-                message = message.replaceAll("<@" + member.getId() + ">", "@" + member.getEffectiveName());
-                message = message.replaceAll("<@!" + member.getId() + ">", "@" + member.getEffectiveName());
-            }
-        }
-        return message;
     }
 
     public static EntityType getEntityType(ISnowflake snowflake) {

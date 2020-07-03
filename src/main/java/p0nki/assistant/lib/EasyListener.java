@@ -6,11 +6,11 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import p0nki.assistant.data.BotConfig;
 import p0nki.assistant.lib.utils.CogInitializer;
 import p0nki.assistant.lib.utils.DiscordParsers;
 import p0nki.assistant.lib.utils.DiscordSource;
-import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.easycommand.CommandDispatcher;
 import p0nki.easycommand.utils.Optional;
 
@@ -43,7 +43,7 @@ public class EasyListener extends ListenerAdapter {
     }
 
     public EasyListener createJda() throws LoginException, InterruptedException {
-        jda = new JDABuilder()
+        jda = JDABuilder.create(GatewayIntent.getIntents(GatewayIntent.DEFAULT))
                 .setBulkDeleteSplittingEnabled(true)
                 .setToken(token.trim())
                 .setActivity(activity)
@@ -106,9 +106,9 @@ public class EasyListener extends ListenerAdapter {
                 if (result.isPresent() && result.get().equals("No command found")) return;
                 System.out.println("COMMAND " + command);
                 if (result.isPresent())
-                    source.send(DiscordUtils.censorPings(source, "Error running command.\n" + result.get()));
+                    source.send("Error running command.\n" + result.get());
             } catch (Throwable t) {
-                source.send(DiscordUtils.censorPings(source, "Error running command.\n" + t.getMessage()));
+                source.send("Error running command.\n" + t.getMessage());
                 System.out.println("COMMAND " + command);
                 System.out.println("ERROR: " + t.getMessage());
                 System.out.println();

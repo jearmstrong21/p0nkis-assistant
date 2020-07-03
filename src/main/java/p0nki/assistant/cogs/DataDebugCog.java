@@ -77,10 +77,10 @@ public class DataDebugCog implements Holder {
             if (res.length() > 2000 - 7) {
                 source.channel().sendFile(res.getBytes(), "Data_dump.txt").queue();
             } else {
-                source.sendCensored("```\n" + res + "```");
+                source.send("```\n" + res + "```");
             }
         } catch (IOException ioException) {
-            source.sendCensored("IOException: " + ioException.getMessage());
+            source.send("IOException: " + ioException.getMessage());
         }
     }
 
