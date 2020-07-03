@@ -1,66 +1,66 @@
 package p0nki.assistant;
 
-import p0nki.javashit.ast.JSASTCreator;
-import p0nki.javashit.ast.JSParseException;
-import p0nki.javashit.ast.nodes.JSASTNode;
-import p0nki.javashit.object.JSObject;
-import p0nki.javashit.run.JSContext;
-import p0nki.javashit.run.JSEvalException;
-import p0nki.javashit.token.JSTokenList;
-import p0nki.javashit.token.JSTokenizeException;
-import p0nki.javashit.token.JSTokenizer;
+import p0nki.pesl.api.PESLContext;
+import p0nki.pesl.api.PESLEvalException;
+import p0nki.pesl.api.object.PESLObject;
+import p0nki.pesl.api.parse.ASTNode;
+import p0nki.pesl.api.parse.PESLParseException;
+import p0nki.pesl.api.parse.PESLParser;
+import p0nki.pesl.api.token.PESLTokenList;
+import p0nki.pesl.api.token.PESLTokenizeException;
+import p0nki.pesl.api.token.PESLTokenizer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
-public class JSEvaluator {
+public class PESLEvaluator {
 
     private final static ExecutorService service = Executors.newSingleThreadExecutor();
 
     public static void evaluate(long timeout,
                                 String code,
-                                JSContext context,
+                                PESLContext context,
                                 Runnable timeoutRunnable,
-                                Consumer<JSTokenizeException> tokenizeExceptionConsumer,
-                                Consumer<JSParseException> parseExceptionConsumer,
-                                Consumer<JSEvalException> evalExceptionConsumer,
-                                Consumer<List<JSObject>> objectConsumer) {
+                                Consumer<PESLTokenizeException> tokenizeExceptionConsumer,
+                                Consumer<PESLParseException> parseExceptionConsumer,
+                                Consumer<PESLEvalException> evalExceptionConsumer,
+                                Consumer<List<PESLObject>> objectConsumer) {
         boolean[] anythingSent = new boolean[]{false};
         try {
             service.submit(() -> {
-                JSTokenizer tokenizer = new JSTokenizer();
-                JSTokenList tokens;
+                PESLTokenizer tokenizer = new PESLTokenizer();
+                PESLTokenList tokens;
                 try {
                     tokens = tokenizer.tokenize(code);
-                } catch (JSTokenizeException e) {
+                } catch (PESLTokenizeException e) {
                     anythingSent[0] = true;
                     tokenizeExceptionConsumer.accept(e);
                     return;
                 }
-                System.out.println("JSEVAL tokenize");
-                JSASTCreator astCreator = new JSASTCreator();
-                List<JSObject> objects = new ArrayList<>();
+                System.out.println("PESLEVAL tokenize");
+                PESLParser parser = new PESLParser();
+                List<PESLObject> objects = new ArrayList<>();
                 try {
                     while (tokens.hasAny()) {
-                        JSASTNode node = astCreator.parseExpression(tokens);
+                        ASTNode node = parser.parseExpression(tokens);
                         objects.add(node.evaluate(context));
                     }
-                } catch (JSParseException e) {
+                } catch (PESLParseException e) {
                     anythingSent[0] = true;
                     parseExceptionConsumer.accept(e);
-                } catch (JSEvalException e) {
+                } catch (PESLEvalException e) {
                     anythingSent[0] = true;
                     evalExceptionConsumer.accept(e);
                 }
                 anythingSent[0] = true;
-                System.out.println("JSEVAL parse and eval");
+                System.out.println("PESLEVAL parse and eval");
                 objectConsumer.accept(objects);
             }).get(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | TimeoutException e) {
             if (!anythingSent[0]) {
-                System.out.println("JSEVAL timeout");
+                System.out.println("PESLEVAL timeout");
                 timeoutRunnable.run();
             }
         } catch (ExecutionException e) {

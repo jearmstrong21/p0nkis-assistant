@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.assistant.Colors;
-import p0nki.assistant.JSEvaluator;
+import p0nki.assistant.PESLEvaluator;
 import p0nki.assistant.data.Trick;
 import p0nki.assistant.data.TrickData;
 import p0nki.assistant.data.TrickType;
@@ -18,8 +18,8 @@ import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.assistant.lib.utils.Holder;
 import p0nki.easycommand.annotations.*;
 import p0nki.easycommand.arguments.Parsers;
-import p0nki.javashit.builtins.Builtins;
-import p0nki.javashit.run.JSContext;
+import p0nki.pesl.api.PESLContext;
+import p0nki.pesl.api.builtins.PESLBuiltins;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
@@ -32,7 +32,6 @@ public class TrickCog extends ListenerAdapter implements Holder {
     private static final String DISABLED = "Tricks are disabled in this guild";
     private static final String NAME_EXISTS = "Trick with that name already exists";
     private static final String NO_SUCH_TRICK = "No such trick with that name";
-    private static final String TRICK_REMOVED = "Trick removed";
 
     private MessageEmbed embed(Trick trick) {
         User owner = jda().getUserById(trick.getOwnerID());
@@ -203,13 +202,13 @@ list: `enabled || manage-server || manage-message`
                     Trick trick = data.fromName(trickName.toString());
                     System.out.println("TRICK " + trickName);
                     if (trick.getType() == TrickType.JS) {
-                        JSContext context = new JSContext(null, new HashMap<>());
-                        context.set("println", Builtins.PRINTLN);
-                        context.set("dir", Builtins.DIR);
-                        context.set("Math", Builtins.MATH);
-                        context.set("Data", Builtins.DATA);
-                        context.set("System", Builtins.SYSTEM);
-                        JSEvaluator.evaluate(
+                        PESLContext context = new PESLContext(null, new HashMap<>());
+                        context.set("println", PESLBuiltins.PRINTLN);
+                        context.set("dir", PESLBuiltins.DIR);
+                        context.set("Math", PESLBuiltins.MATH);
+                        context.set("Data", PESLBuiltins.DATA);
+                        context.set("System", PESLBuiltins.SYSTEM);
+                        PESLEvaluator.evaluate(
                                 2000,
                                 trick.getCode(),
                                 context,
