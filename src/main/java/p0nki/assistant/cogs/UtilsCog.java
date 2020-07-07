@@ -38,7 +38,6 @@ public class UtilsCog extends ListenerAdapter implements Holder {
             } else {
                 RealCommandCog cog = dispatcher().getCogs().get(pageNumber - 1);
                 EmbedBuilder builder = new EmbedBuilder().setTitle("Cog " + pageNumber + "/" + dispatcher().getCogs().size()).setDescription("`" + cog.getName() + "` cog\n\n");
-                // TODO add requirements
                 cog.getCommands().forEach(realCommand -> builder.getDescriptionBuilder()
                         .append(realCommand.getLiterals().stream().map(UtilsCog::longest).collect(Collectors.joining(" ")))
                         .append(" ")
@@ -66,8 +65,6 @@ public class UtilsCog extends ListenerAdapter implements Holder {
         for (int i = 0; i < dispatcher().getCogs().size(); i++) {
             if (dispatcher().getCogs().get(i).getName().equals(cog)) {
                 startHelpPaginator(source, i + 1);
-                // TODO: why is `!help utils` triggering both help commands? wtf
-                // TODO: instead of dead eventlistener spam which doesn't know to remove itself, have a single eventlistener? is this a good idea? ask jda what the performance costs of a fuckton of event listeners are
                 return;
             }
         }

@@ -122,7 +122,7 @@ public class Paginator extends ListenerAdapter {
                             setIndex(currentPageIndex + 1);
                             checkInteractionTime();
                         }
-                    } else if (JUMP_TO && isGoToEnd(event.getReactionEmote())) { // TODO: instead of hardcoding unicode emoji, make them a private static final field in this class
+                    } else if (JUMP_TO && isGoToEnd(event.getReactionEmote())) {
                         setIndex(totalPageCount - 1);
                         checkInteractionTime();
                     }

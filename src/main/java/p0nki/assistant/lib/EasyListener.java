@@ -71,8 +71,6 @@ public class EasyListener extends ListenerAdapter {
         return this;
     }
 
-    // TODO: EasyListenerBuilder
-
     public EasyListener addCog(Class<?>... classes) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         for (Class<?> clazz : classes) {
             addCog(clazz.getConstructor().newInstance());

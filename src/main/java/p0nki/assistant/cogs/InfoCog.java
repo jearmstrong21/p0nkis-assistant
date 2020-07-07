@@ -2,14 +2,14 @@ package p0nki.assistant.cogs;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import p0nki.easycommand.annotations.Argument;
-import p0nki.easycommand.annotations.Command;
-import p0nki.easycommand.annotations.CommandCog;
-import p0nki.easycommand.annotations.Source;
 import p0nki.assistant.lib.requirements.RequireGuild;
 import p0nki.assistant.lib.utils.DiscordSource;
 import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.assistant.lib.utils.Holder;
+import p0nki.easycommand.annotations.Argument;
+import p0nki.easycommand.annotations.Command;
+import p0nki.easycommand.annotations.CommandCog;
+import p0nki.easycommand.annotations.Source;
 
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -84,7 +84,6 @@ public class InfoCog extends ListenerAdapter implements Holder {
         StringBuilder result = new StringBuilder(snowflakes.length + " snowflakes\n");
         for (ISnowflake snowflake : snowflakes) {
             long date = snowflake.getTimeCreated().toInstant().toEpochMilli();
-            // TODO: abstract this to DiscordUtils.timeDifferenceToString(long start, long end) and pass in `date` and `System.currentTimeMillis()`
             result.append(String.format("Snowflake (type %s): created at %s at unix time %s. That's %s ago.\n",
                     DiscordUtils.getEntityType(snowflake), new Date(date), date, DiscordUtils.formatTimeDifference(date, System.currentTimeMillis())));
         }

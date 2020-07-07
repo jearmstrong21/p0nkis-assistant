@@ -64,20 +64,4 @@ public class RepeatedTaskManager implements Holder {
         isRunning = false;
     }
 
-    // TODO repeated task
-
-    // TODO some sort of serialization
-
-    // TODO port comicbot
-
-    // TODO tricks
-
-    // TODO lisp eval
-
-    // TODO revisit espressolisp and add math std lib and full lib import for object-return libs
-
-    // TODO create arithmetic parser to familiarize with that sort of thing
-    // TODO ^ for that have two routines: parseProgram() which recursively calls parseProgram() and parseMathStack() which uses a stack and parseProgram() ?
-    // TODO ^ javascript-like syntax hopefully
-
 }
