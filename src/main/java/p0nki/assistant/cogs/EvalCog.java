@@ -3,10 +3,12 @@ package p0nki.assistant.cogs;
 import p0nki.assistant.PESLEvaluator;
 import p0nki.assistant.lib.utils.DiscordSource;
 import p0nki.assistant.lib.utils.Holder;
-import p0nki.easycommand.annotations.*;
+import p0nki.easycommand.annotations.Argument;
+import p0nki.easycommand.annotations.Command;
+import p0nki.easycommand.annotations.CommandCog;
+import p0nki.easycommand.annotations.Source;
 import p0nki.easycommand.arguments.Parsers;
 import p0nki.pesl.api.PESLContext;
-import p0nki.pesl.api.builtins.PESLBuiltins;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,18 +20,12 @@ public class EvalCog implements Holder {
 
     private PESLContext get(DiscordSource source) {
         if (!contextMap.containsKey(source.user().getId())) {
-            PESLContext context = new PESLContext(null, new HashMap<>());
-            context.set("println", PESLBuiltins.PRINTLN);
-            context.set("dir", PESLBuiltins.DIR);
-            context.set("Math", PESLBuiltins.MATH);
-            context.set("Data", PESLBuiltins.DATA);
-            context.set("System", PESLBuiltins.SYSTEM);
-            contextMap.put(source.user().getId(), context);
+            contextMap.put(source.user().getId(), PESLEvaluator.newContext());
         }
         return contextMap.get(source.user().getId());
     }
 
-    @Command(literals = @Literal({"javascript", "js"}), names = "eval")
+    @Command(names = {"eval", "pesl"})
     public void eval(@Source DiscordSource source, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
         if (code.startsWith("```") && code.endsWith("```") && code.length() > 6) {
             code = code.substring(3, code.length() - 3);

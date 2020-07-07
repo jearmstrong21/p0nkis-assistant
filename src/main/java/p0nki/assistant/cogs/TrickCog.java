@@ -18,12 +18,9 @@ import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.assistant.lib.utils.Holder;
 import p0nki.easycommand.annotations.*;
 import p0nki.easycommand.arguments.Parsers;
-import p0nki.pesl.api.PESLContext;
-import p0nki.pesl.api.builtins.PESLBuiltins;
 
 import javax.annotation.Nonnull;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 @CommandCog(name = "trick", requirements = RequireGuild.class)
@@ -50,25 +47,14 @@ public class TrickCog extends ListenerAdapter implements Holder {
                 .build();
     }
 
-    // TODO: add, remove, list, info
-    // TODO: no need to give detailed error messages, except for disabled vs you can't do that? MAKE SURE THE LOGIC WORKS
-    // TODO: global tricks
-    /*
-enable/disable: `manage-server`
-delete : `owner || manage-message`
-update: `owner && enabled`
-add: `enabled`
-list: `enabled || manage-server || manage-message`
-     */
-
-    @Command(literals = {@Literal("trick"), @Literal({"add", "a"})}, names = {"javascript", "js"})
-    public void addJS(@Source DiscordSource source, @Argument(name = "name") String name, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
+    @Command(literals = {@Literal("trick"), @Literal({"add", "a"})}, names = {"pesl", "p"})
+    public void addPESL(@Source DiscordSource source, @Argument(name = "name") String name, @Argument(name = "code", modifiers = Parsers.GREEDY_STRING) String code) {
         TrickData data = TrickData.CACHE.of(source);
         if (data.isEnabled()) {
             if (data.hasName(name)) {
                 source.send(NAME_EXISTS);
             } else {
-                Trick trick = new Trick(name, source.user().getId(), TrickType.JS, code, System.currentTimeMillis(), 0);
+                Trick trick = new Trick(name, source.user().getId(), TrickType.PESL, code, System.currentTimeMillis(), 0);
                 data.add(trick);
                 source.channel().sendMessage("Trick added").embed(embed(trick)).queue();
             }
@@ -201,24 +187,18 @@ list: `enabled || manage-server || manage-message`
                 if (data.hasName(trickName.toString())) {
                     Trick trick = data.fromName(trickName.toString());
                     System.out.println("TRICK " + trickName);
-                    if (trick.getType() == TrickType.JS) {
-                        PESLContext context = new PESLContext(null, new HashMap<>());
-                        context.set("println", PESLBuiltins.PRINTLN);
-                        context.set("dir", PESLBuiltins.DIR);
-                        context.set("Math", PESLBuiltins.MATH);
-                        context.set("Data", PESLBuiltins.DATA);
-                        context.set("System", PESLBuiltins.SYSTEM);
+                    if (trick.getType() == TrickType.PESL) {
                         PESLEvaluator.evaluate(
                                 2000,
                                 trick.getCode(),
-                                context,
+                                PESLEvaluator.newContext(),
                                 () -> source.send("Timeout while evaluating code"),
                                 tokenizeException -> source.send("Tokenize exception\n```\n" + tokenizeException.getMessage() + "\nat index " + tokenizeException.getIndex() + "\n```"),
                                 parseException -> source.send(String.format("Parse exception\n```\n%s\nat token %s [%d,%d]", parseException.getMessage(), parseException.getToken().toString(), parseException.getToken().getStart(), parseException.getToken().getEnd())),
                                 evalException -> source.send(String.format("Eval exception\n```\n%s\n```", evalException.getObject().toString())),
-                                jsObjects -> {
-                                    if (jsObjects.size() == 0) source.send("No objects as output");
-                                    else source.send(jsObjects.get(jsObjects.size() - 1).castToString());
+                                objects -> {
+                                    if (objects.size() == 0) source.send("No objects as output");
+                                    else source.send(objects.get(objects.size() - 1).castToString());
                                 }
                         );
                     } else if (trick.getType() == TrickType.STR) {
