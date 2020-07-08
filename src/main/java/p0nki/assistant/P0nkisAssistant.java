@@ -17,7 +17,7 @@ public class P0nkisAssistant {
         EasyListener.INSTANCE
                 .setToken(Files.readString(Path.of(DiscordUtils.resource(BotConfig.VALUE.getTokenFile()))))
                 .createJda()
-                .addCog(
+                .addCogs(
                         UtilsCog.class,
                         InfoCog.class,
                         DebugCog.class,

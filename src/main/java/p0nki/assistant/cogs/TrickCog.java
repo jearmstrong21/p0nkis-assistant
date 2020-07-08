@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.assistant.Colors;
-import p0nki.assistant.PESLEvaluator;
 import p0nki.assistant.data.Trick;
 import p0nki.assistant.data.TrickData;
 import p0nki.assistant.data.TrickType;
@@ -16,6 +15,8 @@ import p0nki.assistant.lib.requirements.RequireManageServer;
 import p0nki.assistant.lib.utils.DiscordSource;
 import p0nki.assistant.lib.utils.DiscordUtils;
 import p0nki.assistant.lib.utils.Holder;
+import p0nki.assistant.scripting.BaseScriptingContext;
+import p0nki.assistant.scripting.PESLEvaluator;
 import p0nki.easycommand.annotations.*;
 import p0nki.easycommand.arguments.Parsers;
 
@@ -191,7 +192,7 @@ public class TrickCog extends ListenerAdapter implements Holder {
                         PESLEvaluator.evaluate(
                                 2000,
                                 trick.getCode(),
-                                PESLEvaluator.newContext(),
+                                new BaseScriptingContext(source).getContext(),
                                 () -> source.send("Timeout while evaluating code"),
                                 tokenizeException -> source.send("Tokenize exception\n```\n" + tokenizeException.getMessage() + "\nat index " + tokenizeException.getIndex() + "\n```"),
                                 parseException -> source.send(String.format("Parse exception\n```\n%s\nat token %s [%d,%d]", parseException.getMessage(), parseException.getToken().toString(), parseException.getToken().getStart(), parseException.getToken().getEnd())),

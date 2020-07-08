@@ -1,8 +1,7 @@
-package p0nki.assistant;
+package p0nki.assistant.scripting;
 
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.PESLEvalException;
-import p0nki.pesl.api.object.FunctionObject;
 import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.parse.ASTNode;
 import p0nki.pesl.api.parse.PESLParseException;
@@ -17,16 +16,6 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 public class PESLEvaluator {
-
-    private static final PESLObject PRINTLN = FunctionObject.of(false, arguments -> {
-        throw new PESLEvalException("`println` is disabled");
-    });
-
-    public static PESLContext newContext() {
-        PESLContext context = new PESLContext();
-        context.setKey("println", PRINTLN);
-        return context;
-    }
 
     private final static ExecutorService service = Executors.newSingleThreadExecutor();
 

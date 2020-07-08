@@ -16,7 +16,11 @@ public class DiscordSource {
     }
 
     public void send(CharSequence result) {
-        channel().sendMessage(result).allowedMentions(Collections.emptyList()).queue();
+        if (result.length() > 2000) {
+            channel().sendMessage("Result over 2k char limit. Attached as file.").addFile(result.toString().getBytes(), "result.txt").queue();
+        } else {
+            channel().sendMessage(result).allowedMentions(Collections.emptyList()).queue();
+        }
     }
 
     public boolean isOwner() {
