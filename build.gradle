@@ -15,7 +15,7 @@ dependencies {
     implementation 'com.github.jearmstrong21:EasyCommand:cee8ed5d28'
     implementation "net.dv8tion:JDA:4.2.0_168"
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
-    implementation "com.github.jearmstrong21:PESL:343aa6e170"
+    implementation "com.github.jearmstrong21:PESL:43f69761df"
     implementation "club.minnced:discord-webhooks:0.2.0"
 }
 

@@ -18,7 +18,15 @@ public class GodScriptingContext extends BaseScriptingContext {
 
     @Override
     protected void patch(PESLContext context) {
-
+        context.setKey("guilds", new ArrayObject(jda().getGuilds().stream().map(this::createGuild).collect(Collectors.toList())));
+        context.setKey("guildById", PESLUtils.wrap(arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1);
+            return createGuild(jda().getGuildById(arguments.get(0).castToString()));
+        }));
+        context.setKey("guildsByName", PESLUtils.wrap(arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1);
+            return new ArrayObject(jda().getGuildsByName(arguments.get(0).castToString(), true).stream().map(this::createGuild).collect(Collectors.toList()));
+        }));
     }
 
     @Override

@@ -2,13 +2,14 @@ package p0nki.assistant.scripting;
 
 import net.dv8tion.jda.api.entities.*;
 import p0nki.assistant.lib.utils.DiscordSource;
+import p0nki.assistant.lib.utils.Holder;
 import p0nki.pesl.api.PESLContext;
 import p0nki.pesl.api.object.*;
 
 import java.awt.*;
 import java.util.stream.Collectors;
 
-public class BaseScriptingContext {
+public class BaseScriptingContext implements Holder {
 
     private final PESLContext context;
     private final DiscordSource source;
@@ -24,6 +25,7 @@ public class BaseScriptingContext {
             context.setKey("channel", createPrivateChannel(source.privateChannel()));
         }
         context.setKey("user", createUser(source.user()));
+        context.setKey("message", createMessage(source.message()));
         patch(context);
     }
 
@@ -108,7 +110,7 @@ public class BaseScriptingContext {
                 .put("emotes", PESLUtils.simpleFunc(new ArrayObject(guild.getEmotes().stream().map(this::createEmote).collect(Collectors.toList()))))
                 .put("textChannels", PESLUtils.simpleFunc(new ArrayObject(guild.getTextChannels().stream().map(this::createTextChannel).collect(Collectors.toList()))))
                 .put("roles", PESLUtils.simpleFunc(new ArrayObject(guild.getRoles().stream().map(this::createRole).collect(Collectors.toList()))))
-                .put("owner", createMember(guild.getOwner())), guild);
+                .put("owner", PESLUtils.simpleFunc(createMember(guild.getOwner()))), guild);
     }
 
     public BuiltinMapLikeObject createTextChannel(TextChannel textChannel) {
