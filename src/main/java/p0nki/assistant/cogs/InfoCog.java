@@ -90,4 +90,9 @@ public class InfoCog extends ListenerAdapter implements Holder {
         source.send(result);
     }
 
+    @Command(names = "unicodeinfo")
+    public void unicodeinfo(@Source DiscordSource source, @Argument(name = "text") String text) {
+        source.send(text.chars().boxed().map(Character::getName).collect(Collectors.joining(", ")));
+    }
+
 }
