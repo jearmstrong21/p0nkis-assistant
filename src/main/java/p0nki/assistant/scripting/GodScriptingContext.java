@@ -8,6 +8,7 @@ import p0nki.pesl.api.object.ArrayObject;
 import p0nki.pesl.api.object.BuiltinMapLikeObject;
 import p0nki.pesl.api.object.UndefinedObject;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GodScriptingContext extends BaseScriptingContext {
@@ -19,13 +20,25 @@ public class GodScriptingContext extends BaseScriptingContext {
     @Override
     protected void patch(PESLContext context) {
         context.setKey("guilds", new ArrayObject(jda().getGuilds().stream().map(this::createGuild).collect(Collectors.toList())));
+        context.setKey("userById", PESLUtils.wrap(arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1);
+            return createUser(Objects.requireNonNull(jda().getUserById(arguments.get(0).castToString())));
+        }));
+        context.setKey("emoteById", PESLUtils.wrap(arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1);
+            return createEmote(Objects.requireNonNull(jda().getEmoteById(arguments.get(0).castToString())));
+        }));
+        context.setKey("emotesByName", PESLUtils.wrap(arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1);
+            return new ArrayObject(jda().getEmotesByName(arguments.get(0).castToString(), true).stream().map(this::createEmote).collect(Collectors.toList()));
+        }));
+        context.setKey("channelById", PESLUtils.wrap(arguments -> {
+            PESLEvalException.validArgumentListLength(arguments, 1);
+            return createTextChannel(Objects.requireNonNull(jda().getTextChannelById(arguments.get(0).castToString())));
+        }));
         context.setKey("guildById", PESLUtils.wrap(arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 1);
-            return createGuild(jda().getGuildById(arguments.get(0).castToString()));
-        }));
-        context.setKey("guildsByName", PESLUtils.wrap(arguments -> {
-            PESLEvalException.validArgumentListLength(arguments, 1);
-            return new ArrayObject(jda().getGuildsByName(arguments.get(0).castToString(), true).stream().map(this::createGuild).collect(Collectors.toList()));
+            return createGuild(Objects.requireNonNull(jda().getGuildById(arguments.get(0).castToString())));
         }));
     }
 
@@ -69,40 +82,44 @@ public class GodScriptingContext extends BaseScriptingContext {
                         member.modifyNickname(arguments.get(0).castToString()).complete();
                     }
                     return UndefinedObject.INSTANCE;
-                }));
-    }
-
-    @Override
-    protected BuiltinMapLikeObject patchGuild(BuiltinMapLikeObject object, Guild guild) {
-        return object
-                .put("addRoleToMember", PESLUtils.wrap(arguments -> {
-                    PESLEvalException.validArgumentListLength(arguments, 2);
-                    String memberId;
-                    if (arguments.get(0).getType().equals("member"))
-                        memberId = arguments.get(0).asMapLike().getKey("id").castToString();
-                    else memberId = arguments.get(0).castToString();
-                    String roleId;
-                    if (arguments.get(1).getType().equals("role"))
-                        roleId = arguments.get(1).asMapLike().getKey("id").castToString();
-                    else roleId = arguments.get(1).castToString();
-                    Role role = guild.getRoleById(roleId);
-                    if (role == null) throw new PESLEvalException("Role does not exist");
-                    guild.addRoleToMember(memberId, role).complete();
+                }))
+                .put("addRole", PESLUtils.wrap(arguments -> {
+                    PESLEvalException.validArgumentListLength(arguments, 1);
+                    member.getGuild().addRoleToMember(member, Objects.requireNonNull(member.getGuild().getRoleById(arguments.get(0).castToString()))).queue();
+                    return UndefinedObject.INSTANCE;
+                }))
+                .put("removeRole", PESLUtils.wrap(arguments -> {
+                    PESLEvalException.validArgumentListLength(arguments, 1);
+                    member.getGuild().removeRoleFromMember(member, Objects.requireNonNull(member.getGuild().getRoleById(arguments.get(0).castToString()))).queue();
                     return UndefinedObject.INSTANCE;
                 }));
     }
 
     @Override
-    protected BuiltinMapLikeObject patchTextChannel(BuiltinMapLikeObject object, TextChannel textChannel) {
+    protected BuiltinMapLikeObject patchGuild(BuiltinMapLikeObject object, Guild guild) {
+        return object;
+    }
+
+    @Override
+    protected BuiltinMapLikeObject patchMessageChannel(BuiltinMapLikeObject object, MessageChannel messageChannel) {
         return object
                 .put("send", PESLUtils.wrap(arguments -> {
                     PESLEvalException.validArgumentListLength(arguments, 1);
-                    return createMessage(textChannel.sendMessage(PESLUtils.parseMessage(arguments.get(0))).complete());
+                    return createMessage(messageChannel.sendMessage(PESLUtils.parseMessage(arguments.get(0))).complete());
                 }))
                 .put("fetch", PESLUtils.wrap(arguments -> {
                     PESLEvalException.validArgumentListLength(arguments, 1);
-                    return createMessage(textChannel.retrieveMessageById(arguments.get(0).castToString()).complete());
+                    return createMessage(messageChannel.retrieveMessageById(arguments.get(0).castToString()).complete());
+                }))
+                .put("latest", PESLUtils.wrap(arguments -> {
+                    PESLEvalException.validArgumentListLength(arguments, 0);
+                    return messageChannel.hasLatestMessage() ? createMessage(messageChannel.retrieveMessageById(messageChannel.getLatestMessageId()).complete()) : UndefinedObject.INSTANCE;
                 }));
+    }
+
+    @Override
+    protected BuiltinMapLikeObject patchTextChannel(BuiltinMapLikeObject object, TextChannel textChannel) {
+        return object;
     }
 
     @Override
@@ -118,7 +135,7 @@ public class GodScriptingContext extends BaseScriptingContext {
     @Override
     protected BuiltinMapLikeObject patchUser(BuiltinMapLikeObject object, User user) {
         return object
-                .put("mutualGuilds", new ArrayObject(user.getMutualGuilds().stream().map(this::createGuild).collect(Collectors.toList())))
+                .put("mutualGuilds", PESLUtils.simpleFunc(new ArrayObject(user.getMutualGuilds().stream().map(this::createGuild).collect(Collectors.toList()))))
                 .put("dm", PESLUtils.wrap(arguments -> {
                     PESLEvalException.validArgumentListLength(arguments, 0);
                     return createPrivateChannel(user.openPrivateChannel().complete());

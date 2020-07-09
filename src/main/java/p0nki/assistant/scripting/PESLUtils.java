@@ -9,6 +9,7 @@ import p0nki.pesl.api.object.PESLObject;
 import p0nki.pesl.api.object.StringObject;
 import p0nki.pesl.api.object.UndefinedObject;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
@@ -38,15 +39,15 @@ public class PESLUtils {
         });
     }
 
-    public static PESLObject simpleFunc(PESLObject value) {
+    public static PESLObject simpleFunc(@Nonnull PESLObject value) {
         return FunctionObject.of(false, arguments -> {
             PESLEvalException.validArgumentListLength(arguments, 0);
             return value;
         });
     }
 
-    public static <T> PESLObject nullable(@Nullable T str, Function<T, PESLObject> function) {
-        return Optional.ofNullable(str).map(function).orElse(UndefinedObject.INSTANCE);
+    public static <T> PESLObject nullable(@Nullable T value, Function<T, PESLObject> function) {
+        return Optional.ofNullable(value).map(function).orElse(UndefinedObject.INSTANCE);
     }
 
     public static PESLObject nullableString(@Nullable String str) {

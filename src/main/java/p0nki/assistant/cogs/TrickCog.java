@@ -4,7 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.assistant.Colors;
 import p0nki.assistant.data.Trick;
@@ -173,7 +173,7 @@ public class TrickCog extends ListenerAdapter implements Holder {
     }
 
     @Override
-    public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
+    public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
         DiscordSource source = new DiscordSource(event.getMessage());
         TrickData data = TrickData.CACHE.of(source);
         if (data.isEnabled()) {
