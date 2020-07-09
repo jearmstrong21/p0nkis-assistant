@@ -7,6 +7,7 @@ import p0nki.assistant.lib.page.Paginator;
 import p0nki.easycommand.utils.Optional;
 
 import javax.annotation.Nullable;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
@@ -34,6 +35,14 @@ public class DiscordUtils {
             "\u0039\ufe0f\u20e3",
             "\ud83d\udd1f"
     };
+
+    // https://stackoverflow.com/a/5599842/9609025
+    public static String formatMemory(long size) {
+        if (size <= 0) return "0";
+        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB", "EB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
 
     public static Optional<Integer> unicodeEmojiToIndex(String emoji) {
         for (int i = 0; i < UNICODE_NUMBERS.length; i++) {
@@ -95,7 +104,16 @@ public class DiscordUtils {
         long minutes = ChronoUnit.MINUTES.between(startInstant, endInstant) % 60;
         long seconds = ChronoUnit.SECONDS.between(startInstant, endInstant) % 60;
         long millis = ChronoUnit.MILLIS.between(startInstant, endInstant) % 1000;
-        return String.format("%s years, %s months, %s days, %s hours, %s minutes, %s seconds, and %s milliseconds", years, months, days, hours, minutes, seconds, millis);
+        StringBuilder result = new StringBuilder();
+        if (years > 0) result.append(years).append(" years, ");
+        if (months > 0) result.append(months).append(" months, ");
+        if (days > 0) result.append(days).append(" days, ");
+        if (minutes > 0) result.append(minutes).append(" minutes, ");
+        if (seconds > 0) result.append(seconds).append(" seconds, ");
+        if (millis > 0) result.append(millis).append(" milliseconds, ");
+        String str = result.toString();
+        if (str.endsWith(", ")) return str.substring(0, str.length() - 2);
+        return str;
     }
 
     public static EntityType getEntityType(ISnowflake snowflake) {

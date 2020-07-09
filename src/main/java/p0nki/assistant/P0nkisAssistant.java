@@ -13,7 +13,10 @@ import java.nio.file.Path;
 
 public class P0nkisAssistant {
 
+    public static long START_TIME;
+
     public static void main(String[] args) throws IOException, LoginException, InterruptedException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        START_TIME = System.currentTimeMillis();
         EasyListener.INSTANCE
                 .setToken(Files.readString(Path.of(DiscordUtils.resource(BotConfig.VALUE.getTokenFile()))))
                 .createJda()
