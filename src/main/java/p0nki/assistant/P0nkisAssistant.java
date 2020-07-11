@@ -32,7 +32,8 @@ public class P0nkisAssistant {
                         TrickCog.class,
                         NickCog.class,
                         LevelCog.class,
-                        DataDebugCog.class
+                        DataDebugCog.class,
+                        ShadowBanCog.class
                 )
                 .initializeCogs();
     }
