@@ -150,7 +150,7 @@ public class GodScriptingContext extends BaseScriptingContext {
     @Override
     protected BuiltinMapLikeObject patchMessage(BuiltinMapLikeObject object, Message message) {
         return object
-                .put("delete", PESLUtils.wrap(arguments -> {
+                .put("remove", PESLUtils.wrap(arguments -> { // `remove` since `delete` is a keyword
                     PESLEvalException.validArgumentListLength(arguments, 0);
                     message.delete().complete();
                     return UndefinedObject.INSTANCE;
