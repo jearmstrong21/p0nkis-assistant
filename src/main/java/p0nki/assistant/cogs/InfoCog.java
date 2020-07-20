@@ -1,5 +1,8 @@
 package p0nki.assistant.cogs;
 
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
+import com.vdurmont.emoji.Fitzpatrick;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import p0nki.assistant.lib.requirements.RequireGuild;
@@ -17,12 +20,12 @@ import java.util.stream.Collectors;
 @CommandCog(name = "info")
 public class InfoCog extends ListenerAdapter implements Holder {
 
-    @Command(names = "guildinfo", requirements = RequireGuild.class)
+    @Command(names = {"guild", "guildinfo"}, requirements = RequireGuild.class)
     public void guildinfo(@Source DiscordSource source) {
         source.send(source.guild().getName() + ": " + source.guild().getIconUrl());
     }
 
-    @Command(names = "channelinfo")
+    @Command(names = {"channel", "channelinfo"})
     public void channelinfo(@Source DiscordSource source, @Argument(name = "channels") TextChannel[] channels) {
         StringBuilder result = new StringBuilder(channels.length + " channels\n");
         for (TextChannel channel : channels) {
@@ -31,7 +34,7 @@ public class InfoCog extends ListenerAdapter implements Holder {
         source.send(result);
     }
 
-    @Command(names = "emoteinfo")
+    @Command(names = {"emote", "emoteinfo"})
     public void emoteinfo(@Source DiscordSource source, @Argument(name = "emote") Emote[] emotes) {
         StringBuilder result = new StringBuilder(emotes.length + " emotes\n");
         for (Emote emote : emotes) {
@@ -40,37 +43,35 @@ public class InfoCog extends ListenerAdapter implements Holder {
         source.send(result);
     }
 
-    @Command(names = "userinfo")
+    @Command(names = {"user", "userinfo"})
     public void userinfo(@Source DiscordSource source) {
         userinfo(source, new User[]{source.user()});
     }
 
-    @Command(names = "userinfo")
+    @Command(names = {"user", "userinfo"})
     public void userinfo(@Source DiscordSource source, @Argument(name = "user") User[] users) {
         StringBuilder result = new StringBuilder(users.length + " users\n");
         for (User user : users) {
-            result.append(user.getAsTag()).append(": ").append(user.getEffectiveAvatarUrl()).append("\n");
+            result.append(user.getAsTag()).append(" - ").append(user.getAsMention()).append(": ").append(user.getEffectiveAvatarUrl()).append("\n");
         }
         source.send(result);
     }
 
-    @Command(names = "memberinfo", requirements = RequireGuild.class)
+    @Command(names = {"member", "memberinfo"}, requirements = RequireGuild.class)
     public void memberinfo(@Source DiscordSource source) {
         memberinfo(source, new Member[]{source.member()});
     }
 
-    @Command(names = "memberinfo", requirements = RequireGuild.class)
+    @Command(names = {"member", "memberinfo"}, requirements = RequireGuild.class)
     public void memberinfo(@Source DiscordSource source, @Argument(name = "member") Member[] members) {
         StringBuilder result = new StringBuilder(members.length + " members\n");
         for (Member member : members) {
-            result.append(member.getUser().getAsTag()).append(": ");
-            result.append(member.getRoles().stream().map(Role::getName).collect(Collectors.joining(", ")));
-            result.append("\n");
+            result.append(member.getUser().getAsTag()).append(" - ").append(member.getAsMention()).append(": ").append(member.getRoles().stream().map(Role::getAsMention).collect(Collectors.joining(", "))).append("\n");
         }
         source.send(result);
     }
 
-    @Command(names = "roleinfo")
+    @Command(names = {"role", "roleinfo"})
     public void roleinfo(@Source DiscordSource source, @Argument(name = "role") Role[] roles) {
         StringBuilder result = new StringBuilder(roles.length + " roles\n");
         for (Role role : roles) {
@@ -79,7 +80,7 @@ public class InfoCog extends ListenerAdapter implements Holder {
         source.send(result);
     }
 
-    @Command(names = {"snowflakeinfo", "sf", "sfi", "snowflake"})
+    @Command(names = {"snowflake", "snowflakeinfo"})
     public void snowflakeinfo(@Source DiscordSource source, @Argument(name = "snowflake") ISnowflake[] snowflakes) {
         StringBuilder result = new StringBuilder(snowflakes.length + " snowflakes\n");
         for (ISnowflake snowflake : snowflakes) {
@@ -90,9 +91,32 @@ public class InfoCog extends ListenerAdapter implements Holder {
         source.send(result);
     }
 
-    @Command(names = "unicodeinfo")
+    @Command(names = {"unicode", "unicodeinfo"})
     public void unicodeinfo(@Source DiscordSource source, @Argument(name = "text") String text) {
         source.send(text.chars().boxed().map(Character::getName).collect(Collectors.joining(", ")));
+    }
+
+    @Command(names = {"emoji", "emojiinfo"})
+    public void emojiinfo(@Source DiscordSource source, @Argument(name = "unicodeEmoji") String unicodeEmoji) {
+        Emoji emoji = EmojiManager.getByUnicode(unicodeEmoji);
+        if (emoji == null) {
+            source.send("No such emoji");
+        } else {
+            StringBuilder result = new StringBuilder(String.format("Unicode: %s\n", emoji.getUnicode()));
+            if (emoji.supportsFitzpatrick()) {
+                for (Fitzpatrick fitzpatrick : Fitzpatrick.values()) {
+                    result.append(String.format("Fitzpatrick %s: %s\n", fitzpatrick, emoji.getUnicode(fitzpatrick)));
+                }
+            } else {
+                result.append("Emoji does not support fitzpatrick modifiers\n");
+            }
+            result.append(String.format("Aliases: %s\n", String.join(", ", emoji.getAliases())));
+            result.append(String.format("Tags: %s\n", String.join(", ", emoji.getTags())));
+            result.append(String.format("Description: %s\n", emoji.getDescription()));
+            result.append(String.format("HTML Decimal: %s\n", emoji.getHtmlDecimal()));
+            result.append(String.format("HTML Hexadecimal: %s", emoji.getHtmlHexadecimal()));
+            source.send(result);
+        }
     }
 
 }

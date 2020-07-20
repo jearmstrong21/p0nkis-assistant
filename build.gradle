@@ -8,15 +8,16 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
     jcenter()
-    maven { url "https://jitpack.io" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation 'com.github.jearmstrong21:EasyCommand:cee8ed5d28'
-    implementation "net.dv8tion:JDA:4.2.0_168"
+    implementation group: 'com.github.jearmstrong21', name: 'EasyCommand', version: 'cee8ed5d28'
+    implementation group: 'net.dv8tion', name: 'JDA', version: '4.2.0_168'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.2'
-    implementation "com.github.jearmstrong21:PESL:804ffb3a1b"
-    implementation "club.minnced:discord-webhooks:0.2.0"
+    implementation group: 'com.github.jearmstrong21', name: 'PESL', version: '804ffb3a1b'
+    implementation group: 'club.minnced', name: 'discord-webhooks', version: '0.2.0'
+    implementation group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1'
 }
 
 apply plugin: 'application'

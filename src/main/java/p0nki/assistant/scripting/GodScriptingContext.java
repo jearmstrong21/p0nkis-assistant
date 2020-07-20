@@ -44,6 +44,7 @@ public class GodScriptingContext extends BaseScriptingContext {
 
     @Override
     protected BuiltinMapLikeObject patchMember(BuiltinMapLikeObject object, Member member) {
+        getContext().let("Data", UndefinedObject.INSTANCE);
         return object
                 .put("ban", PESLUtils.wrap(arguments -> {
                     PESLEvalException.validArgumentListLength(arguments, 0, 1, 2);

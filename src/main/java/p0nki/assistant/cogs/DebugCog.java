@@ -27,6 +27,11 @@ public class DebugCog extends ListenerAdapter implements Holder {
         source.send(str);
     }
 
+    @Command(names = "logout")
+    public void logout(@Source DiscordSource source) {
+        System.exit(1);
+    }
+
     @Command(names = "runinfo")
     public void runinfo(@Source DiscordSource source) {
         StringBuilder propertyDump = new StringBuilder();

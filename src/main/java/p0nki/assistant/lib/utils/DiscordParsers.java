@@ -47,27 +47,35 @@ public class DiscordParsers {
         String str = reader.readWord();
         if (str.startsWith("<@!") && str.endsWith(">")) str = str.substring(3, str.length() - 1);
         else if (str.startsWith("<@") && str.endsWith(">")) str = str.substring(2, str.length() - 1);
-        Set<Member> members = new HashSet<>(ds.guild().getMembers());
-        for (Member member : members) {
-            if (member.getId().equals(str)) return Optional.of(member);
+        try {
+            return Optional.of(ds.guild().retrieveMemberById(str).complete());
+        } catch (NullPointerException | IllegalArgumentException e) {
+            return Optional.empty();
         }
-        return Optional.empty();
     };
     public static final ArgumentParser USER_PARSER = (source, reader) -> {
         DiscordSource ds = (DiscordSource) source;
         String str = reader.readWord();
         if (str.startsWith("<@!") && str.endsWith(">")) str = str.substring(3, str.length() - 1);
         else if (str.startsWith("<@") && str.endsWith(">")) str = str.substring(2, str.length() - 1);
-        Set<User> users = new HashSet<>();
-        users.add(ds.jda().getSelfUser());
-        if (ds.isPrivateChannel()) users.add(ds.privateChannel().getUser());
-        if (ds.isGuild())
-            users.addAll(ds.guild().getMembers().stream().map(Member::getUser).collect(Collectors.toSet()));
-        if (ds.isOwner()) users.addAll(ds.jda().getUsers());
-        for (User user : users) {
-            if (user.getId().equals(str)) return Optional.of(user);
+        if (ds.isOwner()) {
+            try {
+                return Optional.of(ds.jda().retrieveUserById(str));
+            } catch (NullPointerException | IllegalArgumentException e) {
+                return Optional.empty();
+            }
+        } else {
+            Set<User> users = new HashSet<>();
+            users.add(ds.jda().getSelfUser());
+            if (ds.isPrivateChannel()) users.add(ds.privateChannel().getUser());
+            if (ds.isGuild())
+                users.addAll(ds.guild().getMembers().stream().map(Member::getUser).collect(Collectors.toSet()));
+            if (ds.isOwner()) users.addAll(ds.jda().getUsers());
+            for (User user : users) {
+                if (user.getId().equals(str)) return Optional.of(user);
+            }
+            return Optional.empty();
         }
-        return Optional.empty();
     };
     public static final ArgumentParser ROLE_PARSER = (source, reader) -> {
         DiscordSource ds = (DiscordSource) source;
